@@ -29,14 +29,14 @@ import static logger.enums.LoggerType.*;
 public abstract class Logger {
     /**
      * The log directory's path
-     * Change it with our path
+     * Change it with your path
      */
     private final static String logPath = "/logs";
     /**
      * Project's name
-     * Change it with our project's name
+     * Change it with your project's name
      */
-    private final static String projectName = "/project";
+    private final static String projectName = "project";
 
     /**
      * The writer for the file
