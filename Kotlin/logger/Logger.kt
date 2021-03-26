@@ -27,7 +27,7 @@ import java.time.LocalDateTime
  * The log directory's path
  * Change it with your path
  */
-internal const val logPath = "/logs"
+internal const val logPath = "./logs"
 
 /**
  * Project's name

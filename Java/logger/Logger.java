@@ -31,7 +31,7 @@ public abstract class Logger {
      * The log directory's path
      * Change it with your path
      */
-    private final static String logPath = "/logs";
+    private final static String logPath = "./logs";
     /**
      * Project's name
      * Change it with your project's name
