@@ -10,6 +10,20 @@ import java.io.*
 import java.time.LocalDateTime
 
 /**
+ * Logger
+ * <p>
+ * Use init() to start the logger and exit() to close the logger
+ * <p>
+ * Simple usage :
+ * debug("Is it simple ? YES")
+ * Write 'Is it simple ? YES' (without the quote) in the console and the file
+ * <p>
+ * Complex usage :
+ * info("Not too complex ?", "Maybe", LoggerOption.CONSOLE_ONLY)
+ * Write 'Not toot complex ? Maybe' (without the quote) only in the console
+ */
+
+/**
  * The log directory's path
  * Change it with your path
  */
@@ -55,15 +69,12 @@ fun init() {
 
             info("Log start", FILE_ONLY)
 
-            if (dirCreated) {
+            if (dirCreated)
                 warning("Log directory created")
-            }
-        } else {
+        } else
             error("Log error")
-        }
-    } else {
+    } else
         warning("Log already init")
-    }
 }
 
 fun exit() {
@@ -71,9 +82,8 @@ fun exit() {
         info("End log", FILE_ONLY)
         printWriter!!.close()
         printWriter = null
-    } else {
+    } else
         error("Please init before exit", CONSOLE_ONLY)
-    }
 }
 
 /**
@@ -84,68 +94,54 @@ internal fun genericLog(args: Array<out Any>, type: LoggerType) {
     val options = ArrayList<LoggerOption>()
 
     for (arg in args) {
-        if (arg is LoggerOption) {
+        if (arg is LoggerOption)
             options.add(arg)
-        } else {
+        else
             messages.add(arg.toString())
-        }
     }
 
     val separator = " "
 
-    var message = StringBuilder()
+    val message = StringBuilder()
 
     for (i in 0 until messages.size) {
         message.append(messages[i])
 
-        if (i < messages.size) {
+        if (i < messages.size)
             message.append(separator)
-        }
     }
 
-    if (!options.contains(FILE_ONLY)) {
+    if (!options.contains(FILE_ONLY))
         println(type.color.toString() + message.toString() + LoggerColor.DEFAULT)
-    }
 
-    if (!options.contains(CONSOLE_ONLY)) {
+    if (!options.contains(CONSOLE_ONLY))
         writeToFile(message.toString(), type)
-    }
 }
 
 /**
  * Info
  */
-fun info(vararg args: Any) {
-    genericLog(args, INFO)
-}
+fun info(vararg args: Any) = genericLog(args, INFO)
 
 /**
  * Success
  */
-fun success(vararg args: Any) {
-    genericLog(args, SUCCESS)
-}
+fun success(vararg args: Any) = genericLog(args, SUCCESS)
 
 /**
  * Error
  */
-fun error(vararg args: Any) {
-    genericLog(args, ERROR)
-}
+fun error(vararg args: Any) = genericLog(args, ERROR)
 
 /**
  * Warning
  */
-fun warning(vararg args: Any) {
-    genericLog(args, WARNING)
-}
+fun warning(vararg args: Any) = genericLog(args, WARNING)
 
 /**
  * Debug
  */
-fun debug(vararg args: Any) {
-    genericLog(args, DEBUG)
-}
+fun debug(vararg args: Any) = genericLog(args, DEBUG)
 
 /**
  * Write the log into the file
@@ -161,9 +157,8 @@ internal fun writeToFile(message: String, type: LoggerType) {
         printWriter!!.println(toPrint)
         nbWrite++
         printWriter!!.flush()
-    } else {
+    } else
         error("Please init Logger", CONSOLE_ONLY)
-    }
 }
 
 /**
