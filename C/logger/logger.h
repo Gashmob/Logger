@@ -83,6 +83,9 @@ typedef enum LoggerType {
     DEBUG
 } LoggerType;
 
+/**
+ * Log options
+ */
 typedef enum LoggerOption {
     FILE_ONLY,
     CONSOLE_ONLY,
@@ -125,7 +128,6 @@ void logger_exit();
 /**
  * Generic log use for all logs
  * @param args char**
- * @param nbArg int
  * @param type LoggerType
  * @param option LoggerOption
  */
