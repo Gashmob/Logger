@@ -146,7 +146,7 @@ fun debug(vararg args: Any) = genericLog(args, DEBUG)
 /**
  * Write the log into the file
  */
-internal fun writeToFile(message: String, type: LoggerType) {
+@Synchronized internal fun writeToFile(message: String, type: LoggerType) {
     if (printWriter != null) {
         val toPrint = ("["
                 + nbWrite + "-"
