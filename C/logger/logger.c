@@ -20,44 +20,44 @@ pthread_mutex_t mutex;
 char *getColor(LoggerColor color) {
     switch (color) {
         case DEFAULT:
-            return "\\e[0;00m";
+            return "\x1B[00m";
 
         case BLACK:
-            return "\\e[0;30m";
+            return "\x1B[30m";
         case RED:
-            return "\\e[0;31m";
+            return "\x1B[31m";
         case GREEN:
-            return "\\e[0;32m";
+            return "\x1B[32m";
         case YELLOW:
-            return "\\e[0;33m";
+            return "\x1B[33m";
         case BLUE:
-            return "\\e[0;34m";
+            return "\x1B[34m";
         case PURPLE:
-            return "\\e[0;35m";
+            return "\x1B[35m";
         case CYAN:
-            return "\\e[0;36m";
+            return "\x1B[36m";
         case WHITE:
-            return "\\e[0;37m";
+            return "\x1B[37m";
 
         case BACKGROUND_BLACK:
-            return "\\e[0;40m";
+            return "\x1B[40m";
         case BACKGROUND_RED:
-            return "\\e[0;41m";
+            return "\x1B[41m";
         case BACKGROUND_GREEN:
-            return "\\e[0;42m";
+            return "\x1B[42m";
         case BACKGROUND_YELLOW:
-            return "\\e[0;43m";
+            return "\x1B[43m";
         case BACKGROUND_BLUE:
-            return "\\e[0;44m";
+            return "\x1B[44m";
         case BACKGROUND_PURPLE:
-            return "\\e[0;45m";
+            return "\x1B[45m";
         case BACKGROUND_CYAN:
-            return "\\e[0;46m";
+            return "\x1B[46m";
         case BACKGROUND_WHITE:
-            return "\\e[0;47m";
+            return "\x1B[47m";
 
         default:
-            return "\\e[0;00m";
+            return "\x1B[00m";
     }
 }
 
