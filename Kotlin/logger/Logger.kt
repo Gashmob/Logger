@@ -77,6 +77,9 @@ fun init() {
         warning("Log already init")
 }
 
+/**
+ * Quit the log and close the file
+ */
 fun exit() {
     if (printWriter != null) {
         info("End log", FILE_ONLY)
