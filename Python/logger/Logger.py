@@ -25,24 +25,24 @@ Change it with your path"""
 class LoggerColor(Enum):
     """Log colors
     Use DEFAULT for reset color"""
-    DEFAULT = "\u001B[00m",
+    DEFAULT = "\x1B[00m",
 
-    BLACK = "\u001B[30m",
-    RED = "\u001B[31m",
-    GREEN = "\u001B[32m",
-    YELLOW = "\u001B[33m",
-    BLUE = "\u001B[34m",
-    PURPLE = "\u001B[35m",
-    CYAN = "\u001B[36m",
-    WHITE = "\u001B[37m",
+    BLACK = "\x1B[30m",
+    RED = "\x1B[31m",
+    GREEN = "\x1B[32m",
+    YELLOW = "\x1B[33m",
+    BLUE = "\x1B[34m",
+    PURPLE = "\x1B[35m",
+    CYAN = "\x1B[36m",
+    WHITE = "\x1B[37m",
 
-    BACKGROUND_BLACK = "\u001B[40m",
-    BACKGROUND_RED = "\u001B[41m",
-    BACKGROUND_GREEN = "\u001B[42m",
-    BACKGROUND_YELLOW = "\u001B[43m",
-    BACKGROUND_BLUE = "\u001B[44m",
-    BACKGROUND_PURPLE = "\u001B[45m",
-    BACKGROUND_CYAN = "\u001B[46m",
+    BACKGROUND_BLACK = "\x1B[40m",
+    BACKGROUND_RED = "\x1B[41m",
+    BACKGROUND_GREEN = "\x1B[42m",
+    BACKGROUND_YELLOW = "\x1B[43m",
+    BACKGROUND_BLUE = "\x1B[44m",
+    BACKGROUND_PURPLE = "\x1B[45m",
+    BACKGROUND_CYAN = "\x1B[46m",
     BACKGROUND_WHITE = "\x1B[47m"
 
 
@@ -154,7 +154,7 @@ class Logger:
     def __write_to_file(cls, message, log_type):
         """Write the into the file"""
         if cls.__file is not None:
-            cls.__file.write("[" + str(cls.__nbWrite) + "-" + cls.__getHour() + "-" + log_type.name + "] " + message)
+            cls.__file.write("[" + str(cls.__nbWrite) + "-" + cls.__getHour() + "-" + log_type.name + "] " + message + "\n")
             cls.__nbWrite += 1
             cls.__file.flush()
         else:
