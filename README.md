@@ -1,11 +1,11 @@
 # Logger
 
-A simple logger system in some languages. Each version uses the same concept
+Un simple système de logger dans plusieurs langages. Chaque version utilise le même concept.
 
-With help from [Rominos111](https://github.com/Rominos111) for the original Java version. And help from [Hunter Vaners](https://github.com/huntervaners) for Python version.
+Avec l'aide de [Rominos111](https://github.com/Rominos111) pour la version originale en Java, et l'aide de [Hunter Vaners](https://github.com/huntervaners) pour la version Python.
 
 ---
 
-Usage :
+Utilisation :
 
-Choose your language and just copy/paste the content of the folder (not the folder, just *the content*), generally it's just a `logger` folder
+Chaque dossier de langages contient un dossier `logger`, il vous suffit juste de copier/coller ce dossier dans les sources de votre projet.
