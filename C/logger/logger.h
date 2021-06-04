@@ -16,7 +16,7 @@
 /**
  * Logger
  * <p>
- * Use init() to start the logger and exit() to close the logger
+ * Use logger_init() to start the logger and logger_exit() to close the logger
  * <p>
  * Simple usage :
  * debug(FILE_AND_CONSOLE, "Is it simple ? YES");
@@ -47,32 +47,6 @@
 #define MAX_MESSAGE 100
 
 /**
- * Log colors
- * Use DEFAULT for reset color
- */
-typedef enum LoggerColor {
-    DEFAULT,
-
-    BLACK,
-    RED,
-    GREEN,
-    YELLOW,
-    BLUE,
-    PURPLE,
-    CYAN,
-    WHITE,
-
-    BACKGROUND_BLACK,
-    BACKGROUND_RED,
-    BACKGROUND_GREEN,
-    BACKGROUND_YELLOW,
-    BACKGROUND_BLUE,
-    BACKGROUND_PURPLE,
-    BACKGROUND_CYAN,
-    BACKGROUND_WHITE
-} LoggerColor;
-
-/**
  * Log types
  */
 typedef enum LoggerType {
@@ -92,29 +66,6 @@ typedef enum LoggerOption {
     FILE_AND_CONSOLE
 } LoggerOption;
 
-// _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
-
-/**
- * Return the color code
- * @param color LoggerColor
- * @return char*
- */
-char *getColor(LoggerColor color);
-
-/**
- * Return the color code of the log type
- * @param type LoggerType
- * @return char*
- */
-char *getTypeColor(LoggerType type);
-
-/**
- * Return the name of the log type
- * @param type LoggerType
- * @return
- */
-char *getTypeName(LoggerType type);
-
 /**
  * Initialisation
  */
@@ -126,72 +77,43 @@ void logger_init();
 void logger_exit();
 
 /**
- * Generic log use for all logs
- * @param args char**
- * @param type LoggerType
- * @param option LoggerOption
- */
-void genericLog(char *message, LoggerType type, LoggerOption option);
-
-/**
  * Info
  * @param option LoggerOption
- * @param arg char*
+ * @param format char*
  * @param ...
  */
-void info(LoggerOption option, char *arg, ...);
+void info(LoggerOption option, char *format, ...);
 
 /**
  * Success
  * @param option LoggerOption
- * @param arg char*
+ * @param format char*
  * @param ...
  */
-void success(LoggerOption option, char *arg, ...);
+void success(LoggerOption option, char *format, ...);
 
 /**
  * Error
  * @param option LoggerOption
- * @param arg char*
+ * @param format char*
  * @param ...
  */
-void error(LoggerOption option, char *arg, ...);
+void error(LoggerOption option, char *format, ...);
 
 /**
  * Warning
  * @param option LoggerOption
- * @param arg char*
+ * @param format char*
  * @param ...
  */
-void warning(LoggerOption option, char *arg, ...);
+void warning(LoggerOption option, char *format, ...);
 
 /**
  * Debug
  * @param option LoggerOption
- * @param arg char*
+ * @param format char*
  * @param ...
  */
-void debug(LoggerOption option, char *arg, ...);
-
-/**
- * Write the log into the file
- * @param message char*
- * @param type LoggerType
- */
-void writeToFile(char *message, LoggerType type);
-
-/**
- * The log's hour
- * hh:mm:ss:nnn
- * @return char*
- */
-char *getHour();
-
-/**
- * The log's date
- * yyyy-mm-dd@hh-mm-ss
- * @return char*
- */
-char *getDate();
+void debug(LoggerOption option, char *format, ...);
 
 #endif //LOGGER_LOGGER_H

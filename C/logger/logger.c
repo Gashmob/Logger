@@ -1,6 +1,86 @@
 #include "logger.h"
 
 /**
+ * Log colors
+ * Use DEFAULT for reset color
+ */
+typedef enum LoggerColor {
+    DEFAULT,
+
+    BLACK,
+    RED,
+    GREEN,
+    YELLOW,
+    BLUE,
+    PURPLE,
+    CYAN,
+    WHITE,
+
+    BACKGROUND_BLACK,
+    BACKGROUND_RED,
+    BACKGROUND_GREEN,
+    BACKGROUND_YELLOW,
+    BACKGROUND_BLUE,
+    BACKGROUND_PURPLE,
+    BACKGROUND_CYAN,
+    BACKGROUND_WHITE
+} LoggerColor;
+
+// _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
+
+/**
+ * Return the color code
+ * @param color LoggerColor
+ * @return char*
+ */
+char *getColor(LoggerColor color);
+
+/**
+ * Return the color code of the log type
+ * @param type LoggerType
+ * @return char*
+ */
+char *getTypeColor(LoggerType type);
+
+/**
+ * Return the name of the log type
+ * @param type LoggerType
+ * @return
+ */
+char *getTypeName(LoggerType type);
+
+/**
+ * Generic log use for all logs
+ * @param args char**
+ * @param type LoggerType
+ * @param option LoggerOption
+ */
+void genericLog(char *message, LoggerType type, LoggerOption option);
+
+/**
+ * Write the log into the file
+ * @param message char*
+ * @param type LoggerType
+ */
+void writeToFile(char *message, LoggerType type);
+
+/**
+ * The log's hour
+ * hh:mm:ss:nnn
+ * @return char*
+ */
+char *getHour();
+
+/**
+ * The log's date
+ * yyyy-mm-dd@hh-mm-ss
+ * @return char*
+ */
+char *getDate();
+
+// _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
+
+/**
  * The log file
  */
 FILE *file = NULL;
@@ -151,47 +231,47 @@ void genericLog(char *message, LoggerType type, LoggerOption option) {
     }
 }
 
-void info(LoggerOption option, char *arg, ...) {
+void info(LoggerOption option, char *format, ...) {
     va_list vaList;
-    va_start(vaList, arg);
+    va_start(vaList, format);
     char *message = malloc(sizeof(char) * MAX_MESSAGE);
-    vsprintf(message, arg, vaList);
+    vsprintf(message, format, vaList);
     genericLog(message, INFO, option);
     va_end(vaList);
 }
 
-void success(LoggerOption option, char *arg, ...) {
+void success(LoggerOption option, char *format, ...) {
     va_list vaList;
-    va_start(vaList, arg);
+    va_start(vaList, format);
     char *message = malloc(sizeof(char) * MAX_MESSAGE);
-    vsprintf(message, arg, vaList);
+    vsprintf(message, format, vaList);
     genericLog(message, SUCCESS, option);
     va_end(vaList);
 }
 
-void error(LoggerOption option, char *arg, ...) {
+void error(LoggerOption option, char *format, ...) {
     va_list vaList;
-    va_start(vaList, arg);
+    va_start(vaList, format);
     char *message = malloc(sizeof(char) * MAX_MESSAGE);
-    vsprintf(message, arg, vaList);
+    vsprintf(message, format, vaList);
     genericLog(message, ERROR, option);
     va_end(vaList);
 }
 
-void warning(LoggerOption option, char *arg, ...) {
+void warning(LoggerOption option, char *format, ...) {
     va_list vaList;
-    va_start(vaList, arg);
+    va_start(vaList, format);
     char *message = malloc(sizeof(char) * MAX_MESSAGE);
-    vsprintf(message, arg, vaList);
+    vsprintf(message, format, vaList);
     genericLog(message, WARNING, option);
     va_end(vaList);
 }
 
-void debug(LoggerOption option, char *arg, ...) {
+void debug(LoggerOption option, char *format, ...) {
     va_list vaList;
-    va_start(vaList, arg);
+    va_start(vaList, format);
     char *message = malloc(sizeof(char) * MAX_MESSAGE);
-    vsprintf(message, arg, vaList);
+    vsprintf(message, format, vaList);
     genericLog(message, DEBUG, option);
     va_end(vaList);
 }
