@@ -8,6 +8,7 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static logger.enums.LoggerOption.*;
 import static logger.enums.LoggerType.*;
@@ -53,27 +54,39 @@ public abstract class Logger {
      * Show trace or not
      */
     private static Boolean showTrace;
+    /**
+     * The types of logs that be shown
+     */
+    private static ArrayList<LoggerType> showTypes;
 
     public static void init() {
-        init(FILE_AND_CONSOLE, true);
+        init(FILE_AND_CONSOLE, true, new LoggerType[]{INFO, SUCCESS, ERROR, WARNING, DEBUG});
     }
 
     public static void init(LoggerOption verbose) {
-        init(verbose, true);
+        init(verbose, true, new LoggerType[]{INFO, SUCCESS, ERROR, WARNING, DEBUG});
     }
 
     public static void init(Boolean showTrace) {
-        init(FILE_AND_CONSOLE, showTrace);
+        init(FILE_AND_CONSOLE, showTrace, new LoggerType[]{INFO, SUCCESS, ERROR, WARNING, DEBUG});
+    }
+
+    public static void init(LoggerType[] showTypes) {
+        init(FILE_AND_CONSOLE, true, showTypes);
     }
 
     /**
      * Initialisation
+     * @param verbose LoggerOption
+     * @param showTrace Boolean
+     * @param showTypes LoggerType
      */
-    public static void init(LoggerOption verbose, Boolean showTrace) {
-        Logger.verbose = verbose;
-        Logger.showTrace = showTrace;
-
+    public static void init(LoggerOption verbose, Boolean showTrace, LoggerType[] showTypes) {
         if (printWriter == null) {
+            Logger.verbose = verbose;
+            Logger.showTrace = showTrace;
+            Logger.showTypes = new ArrayList<>(Arrays.asList(showTypes));
+
             boolean ok;
             boolean dirCreated = false;
             BufferedWriter bufferedWriter = null;
@@ -141,7 +154,7 @@ public abstract class Logger {
             message.insert(0, t);
         }
 
-        if (!options.contains(FILE_ONLY) && verbose != FILE_ONLY) {
+        if (!options.contains(FILE_ONLY) && verbose != FILE_ONLY && showTypes.contains(type)) {
             System.out.println(type.getColor() + message.toString() + LoggerColor.DEFAULT);
         }
 
