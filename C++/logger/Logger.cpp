@@ -6,6 +6,12 @@ int Logger::nbWrite = 0;
 
 pthread_mutex_t Logger::mutex;
 
+LoggerOption Logger::verbose = FILE_AND_CONSOLE;
+
+bool Logger::showTrace = true;
+
+std::vector<LoggerType> Logger::showTypes = {INFO, SUCCESS, ERROR, WARNING, DEBUG};
+
 
 std::string Logger::getColor(LoggerColor color) {
     switch (color) {
@@ -87,8 +93,12 @@ std::string Logger::getTypeName(LoggerType type) {
     }
 }
 
-void Logger::init() {
+void Logger::init(LoggerOption verboseP, bool showTraceP, std::vector<LoggerType> showTypesP) {
     if (!file.is_open()) {
+        verbose = verboseP;
+        showTrace = showTraceP;
+        showTypes = showTypesP;
+
         bool dirCreated = false;
 
         if (mkdir(LOG_PATH, S_IRWXU) == 0)
@@ -120,10 +130,13 @@ void Logger::exit() {
 }
 
 void Logger::genericLog(const std::string &message, LoggerType type, LoggerOption option) {
-    if (option != FILE_ONLY)
+    // TODO : get stack trace
+
+    if (option != FILE_ONLY && verbose != FILE_ONLY &&
+        std::find(showTypes.begin(), showTypes.end(), type) != showTypes.end())
         std::cout << getTypeColor(type) << message << getColor(DEFAULT);
 
-    if (option != CONSOLE_ONLY) {
+    if (option != CONSOLE_ONLY && verbose != CONSOLE_ONLY) {
         pthread_mutex_lock(&mutex);
         writeToFile(message, type);
         pthread_mutex_unlock(&mutex);
@@ -133,7 +146,7 @@ void Logger::genericLog(const std::string &message, LoggerType type, LoggerOptio
 void Logger::writeToFile(const std::string &message, LoggerType type) {
     if (file.is_open()) {
         std::string toPrint =
-                "[" + std::to_string(nbWrite) + "-" + getHour() + "-" + getTypeName(type) + "] " + message;
+                "[" + std::to_string(nbWrite) + "-" + getHour() + "-" + getTypeName(type) + "]\t" + message;
         file << toPrint;
         file.flush();
         nbWrite++;

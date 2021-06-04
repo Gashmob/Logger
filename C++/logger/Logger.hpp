@@ -9,6 +9,8 @@
 #include <sstream>
 #include <thread>
 #include <cstring>
+#include <vector>
+#include <algorithm>
 
 /**
  * Logger
@@ -112,7 +114,9 @@ public:
     /**
      * Initialisation
      */
-    static void init();
+    static void init(LoggerOption verboseP = FILE_AND_CONSOLE,
+                     bool showTraceP = true,
+                     std::vector<LoggerType> showTypesP = {INFO, SUCCESS, ERROR, WARNING, DEBUG});
 
     /**
      * Quit the log and close the writer
@@ -218,6 +222,18 @@ private:
      * A mutex for writeToFile(), to be thread-safe
      */
     static pthread_mutex_t mutex;
+    /**
+     * The type of verbose
+     */
+    static LoggerOption verbose;
+    /**
+     * Show trace or not
+     */
+    static bool showTrace;
+    /**
+     * The types of logs that be shown
+     */
+    static std::vector<LoggerType> showTypes;
 
 private: // Disallow to instance this class
     Logger() = default;
