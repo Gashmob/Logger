@@ -8,9 +8,9 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-import static logger.enums.LoggerOption.CONSOLE_ONLY;
-import static logger.enums.LoggerOption.FILE_ONLY;
+import static logger.enums.LoggerOption.*;
 import static logger.enums.LoggerType.*;
 
 /**
@@ -46,12 +46,47 @@ public abstract class Logger {
      * The number of log
      */
     private static int nbWrite = 0;
+    /**
+     * The type of verbose
+     */
+    private static LoggerOption verbose;
+    /**
+     * Show trace or not
+     */
+    private static Boolean showTrace;
+    /**
+     * The types of logs that be shown
+     */
+    private static ArrayList<LoggerType> showTypes;
+
+    public static void init() {
+        init(FILE_AND_CONSOLE, true, new LoggerType[]{INFO, SUCCESS, ERROR, WARNING, DEBUG});
+    }
+
+    public static void init(LoggerOption verbose) {
+        init(verbose, true, new LoggerType[]{INFO, SUCCESS, ERROR, WARNING, DEBUG});
+    }
+
+    public static void init(Boolean showTrace) {
+        init(FILE_AND_CONSOLE, showTrace, new LoggerType[]{INFO, SUCCESS, ERROR, WARNING, DEBUG});
+    }
+
+    public static void init(LoggerType[] showTypes) {
+        init(FILE_AND_CONSOLE, true, showTypes);
+    }
 
     /**
      * Initialisation
+     * @param verbose LoggerOption
+     * @param showTrace Boolean
+     * @param showTypes LoggerType
      */
-    public static void init() {
+    public static void init(LoggerOption verbose, Boolean showTrace, LoggerType[] showTypes) {
         if (printWriter == null) {
+            Logger.verbose = verbose;
+            Logger.showTrace = showTrace;
+            Logger.showTypes = new ArrayList<>(Arrays.asList(showTypes));
+
             boolean ok;
             boolean dirCreated = false;
             BufferedWriter bufferedWriter = null;
@@ -112,11 +147,18 @@ public abstract class Logger {
             }
         }
 
-        if (!options.contains(FILE_ONLY)) {
+        StackTraceElement[] traces = Thread.currentThread().getStackTrace();
+        if (traces.length > 3 && showTrace) {
+            StackTraceElement trace = traces[3];
+            String t = "[" + trace.getClassName() + "." + trace.getMethodName() + "]\t";
+            message.insert(0, t);
+        }
+
+        if (!options.contains(FILE_ONLY) && verbose != FILE_ONLY && showTypes.contains(type)) {
             System.out.println(type.getColor() + message.toString() + LoggerColor.DEFAULT);
         }
 
-        if (!options.contains(CONSOLE_ONLY)) {
+        if (!options.contains(CONSOLE_ONLY) && verbose != CONSOLE_ONLY) {
             writeToFile(message.toString(), type);
         }
     }
@@ -177,7 +219,7 @@ public abstract class Logger {
             String toPrint = "["
                     + nbWrite + "-"
                     + getHour() + "-"
-                    + type.toString() + "] "
+                    + type.toString() + "]\t"
                     + message;
 
             printWriter.println(toPrint);

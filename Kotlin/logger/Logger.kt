@@ -2,8 +2,7 @@ package logger
 
 import logger.enums.LoggerColor
 import logger.enums.LoggerOption
-import logger.enums.LoggerOption.CONSOLE_ONLY
-import logger.enums.LoggerOption.FILE_ONLY
+import logger.enums.LoggerOption.*
 import logger.enums.LoggerType
 import logger.enums.LoggerType.*
 import java.io.*
@@ -46,10 +45,33 @@ internal var printWriter: PrintWriter? = null
 internal var nbWrite = 0
 
 /**
+ * The type of verbose
+ */
+internal var verbose = FILE_AND_CONSOLE
+
+/**
+ * Show trace or not
+ */
+internal var showTrace = true
+
+/**
+ * The types of logs that be shown
+ */
+internal var showTypes = ArrayList<LoggerType>()
+
+/**
  * Initialisation
  */
-fun init() {
+fun init(
+    verboseP: LoggerOption = FILE_AND_CONSOLE,
+    showTraceP: Boolean = true,
+    showTypesP: ArrayList<LoggerType> = arrayListOf(INFO, SUCCESS, ERROR, WARNING, DEBUG)
+) {
     if (printWriter == null) {
+        verbose = verboseP
+        showTrace = showTraceP
+        showTypes = showTypesP
+
         var dirCreated = false
         var bufferedWriter: BufferedWriter? = null
 
@@ -114,10 +136,17 @@ internal fun genericLog(args: Array<out Any>, type: LoggerType) {
             message.append(separator)
     }
 
-    if (!options.contains(FILE_ONLY))
+    val traces = Thread.currentThread().stackTrace
+    if (traces.size > 3 && showTrace) {
+        val trace = traces[3]
+        val t = "[" + trace.className + "." + trace.methodName + "]\t"
+        message.insert(0, t)
+    }
+
+    if (!options.contains(FILE_ONLY) && verbose != FILE_ONLY && showTypes.contains(type))
         println(type.color.toString() + message.toString() + LoggerColor.DEFAULT)
 
-    if (!options.contains(CONSOLE_ONLY))
+    if (!options.contains(CONSOLE_ONLY) && verbose != CONSOLE_ONLY)
         writeToFile(message.toString(), type)
 }
 
@@ -149,12 +178,13 @@ fun debug(vararg args: Any) = genericLog(args, DEBUG)
 /**
  * Write the log into the file
  */
-@Synchronized internal fun writeToFile(message: String, type: LoggerType) {
+@Synchronized
+internal fun writeToFile(message: String, type: LoggerType) {
     if (printWriter != null) {
         val toPrint = ("["
                 + nbWrite + "-"
                 + getHour() + "-"
-                + type.toString() + "] "
+                + type.toString() + "]\t"
                 + message)
 
         printWriter!!.println(toPrint)

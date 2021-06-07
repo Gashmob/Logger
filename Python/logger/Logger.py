@@ -1,4 +1,5 @@
 import os
+import traceback
 from _datetime import datetime
 from enum import Enum
 
@@ -69,11 +70,21 @@ class Logger:
     """The file where we write logs"""
     __nbWrite = 0
     """The number of log"""
+    __verbose = LoggerOption.FILE_AND_CONSOLE
+    """The type of verbose"""
+    __showTrace = True
+    """Show trace or not"""
+    __showTypes = (LoggerType.INFO, LoggerType.SUCCESS, LoggerType.ERROR, LoggerType.WARNING, LoggerType.DEBUG)
 
     @classmethod
-    def init(cls):
+    def init(cls, verbose=LoggerOption.FILE_AND_CONSOLE, showTrace=True,
+             showTypes=(LoggerType.INFO, LoggerType.SUCCESS, LoggerType.ERROR, LoggerType.WARNING, LoggerType.DEBUG)):
         """Initialisation"""
         if cls.__file is None:
+            cls.__verbose = verbose
+            cls.__showTrace = showTrace
+            cls.__showTypes = showTypes
+
             dir_created = False
 
             if not os.path.exists(logPath):
@@ -115,14 +126,20 @@ class Logger:
         for m in messages:
             message += str(m) + " "
 
-        if LoggerOption.FILE_ONLY not in options:
+        traces = traceback.extract_stack()
+        if len(traces) > 2 and cls.__showTrace:
+            trace = traces[2]
+            t = "[" + trace.name + "]\t"
+            message = t + message
+
+        if LoggerOption.FILE_ONLY not in options and cls.__verbose != LoggerOption.FILE_ONLY and log_type in cls.__showTypes:
             if len(log_type.value) == 1:
                 name, color = log_type.value[0]
             else:
                 name, color = log_type.value
             print(color.value[0] + message + LoggerColor.DEFAULT.value[0])
 
-        if LoggerOption.CONSOLE_ONLY not in options:
+        if LoggerOption.CONSOLE_ONLY not in options and cls.__verbose != LoggerOption.CONSOLE_ONLY:
             cls.__write_to_file(message, log_type)
 
     @classmethod
@@ -154,7 +171,8 @@ class Logger:
     def __write_to_file(cls, message, log_type):
         """Write the into the file"""
         if cls.__file is not None:
-            cls.__file.write("[" + str(cls.__nbWrite) + "-" + cls.__getHour() + "-" + log_type.name + "] " + message + "\n")
+            cls.__file.write(
+                "[" + str(cls.__nbWrite) + "-" + cls.__getHour() + "-" + log_type.name + "]\t" + message + "\n")
             cls.__nbWrite += 1
             cls.__file.flush()
         else:

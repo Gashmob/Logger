@@ -6,6 +6,12 @@ int Logger::nbWrite = 0;
 
 pthread_mutex_t Logger::mutex;
 
+LoggerOption Logger::verbose = FILE_AND_CONSOLE;
+
+bool Logger::showTrace = true;
+
+std::vector<LoggerType> Logger::showTypes = {INFO, SUCCESS, ERROR, WARNING, DEBUG};
+
 
 std::string Logger::getColor(LoggerColor color) {
     switch (color) {
@@ -87,8 +93,12 @@ std::string Logger::getTypeName(LoggerType type) {
     }
 }
 
-void Logger::init() {
+void Logger::init(LoggerOption verboseP, bool showTraceP, const std::vector<LoggerType> &showTypesP) {
     if (!file.is_open()) {
+        verbose = verboseP;
+        showTrace = showTraceP;
+        showTypes = showTypesP;
+
         bool dirCreated = false;
 
         if (mkdir(LOG_PATH, S_IRWXU) == 0)
@@ -100,32 +110,43 @@ void Logger::init() {
         nbWrite = 0;
 
         if (pthread_mutex_init(&mutex, nullptr) != 0)
-            error(CONSOLE_ONLY, "Error mutex : %d\n", errno);
+            ERROR_LOG(CONSOLE_ONLY, "Error mutex : %d\n", errno);
 
-        info(FILE_ONLY, "Log start\n");
+        INFO_LOG(FILE_ONLY, "Log start\n");
         if (dirCreated)
-            warning(FILE_AND_CONSOLE, "Log directory created\n");
+            WARNING_LOG(FILE_AND_CONSOLE, "Log directory created\n");
     } else
-        warning(FILE_AND_CONSOLE, "Log already init\n");
+        WARNING_LOG(FILE_AND_CONSOLE, "Log already init\n");
 }
 
 void Logger::exit() {
     if (file.is_open()) {
-        info(FILE_ONLY, "End log\n");
+        INFO_LOG(FILE_ONLY, "End log\n");
         file.close();
 
         pthread_mutex_destroy(&mutex);
     } else
-        error(CONSOLE_ONLY, "Please init before exit\n");
+        ERROR_LOG(CONSOLE_ONLY, "Please init before exit\n");
 }
 
-void Logger::genericLog(const std::string &message, LoggerType type, LoggerOption option) {
-    if (option != FILE_ONLY)
-        std::cout << getTypeColor(type) << message << getColor(DEFAULT);
+void Logger::genericLog(const std::string &function, const std::string &message, LoggerType type, LoggerOption option) {
+    std::string t = message;
 
-    if (option != CONSOLE_ONLY) {
+    if (showTrace) {
+        t = "[" + function + "]\t" + message;
+    }
+
+    if (t[t.length() - 1] != '\n') {
+        t += "\n";
+    }
+
+    if (option != FILE_ONLY && verbose != FILE_ONLY &&
+        std::find(showTypes.begin(), showTypes.end(), type) != showTypes.end())
+        std::cout << getTypeColor(type) << t << getColor(DEFAULT);
+
+    if (option != CONSOLE_ONLY && verbose != CONSOLE_ONLY) {
         pthread_mutex_lock(&mutex);
-        writeToFile(message, type);
+        writeToFile(t, type);
         pthread_mutex_unlock(&mutex);
     }
 }
@@ -133,12 +154,12 @@ void Logger::genericLog(const std::string &message, LoggerType type, LoggerOptio
 void Logger::writeToFile(const std::string &message, LoggerType type) {
     if (file.is_open()) {
         std::string toPrint =
-                "[" + std::to_string(nbWrite) + "-" + getHour() + "-" + getTypeName(type) + "] " + message;
+                "[" + std::to_string(nbWrite) + "-" + getHour() + "-" + getTypeName(type) + "]\t" + message;
         file << toPrint;
         file.flush();
         nbWrite++;
     } else
-        error(CONSOLE_ONLY, "Please init logger\n");
+        ERROR_LOG(CONSOLE_ONLY, "Please init logger\n");
 }
 
 std::string Logger::getHour() {
