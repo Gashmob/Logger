@@ -51,11 +51,12 @@ char *getTypeName(LoggerType type);
 
 /**
  * Generic log use for all logs
- * @param args char**
+ * @param function const char*
+ * @param message char*
  * @param type LoggerType
  * @param option LoggerOption
  */
-void genericLog(char *message, LoggerType type, LoggerOption option);
+void genericLog(const char *function, char *message, LoggerType type, LoggerOption option);
 
 /**
  * Write the log into the file
@@ -78,6 +79,13 @@ char *getHour();
  */
 char *getDate();
 
+/**
+ * Return true if showType contains type
+ * @param type LoggerType
+ * @return bool
+ */
+bool showTypesContains(LoggerType type);
+
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
 /**
@@ -96,6 +104,18 @@ int nbWrite = 0;
  * A mutex to be thread safe when write to file
  */
 pthread_mutex_t mutex;
+/**
+ * The type of verbose
+ */
+LoggerOption verbose;
+/**
+ * Show trace or not
+ */
+bool showTrace;
+/**
+ * The type of logs that be shown
+ */
+LoggerType showTypes[5];
 
 char *getColor(LoggerColor color) {
     switch (color) {
@@ -179,8 +199,14 @@ char *getTypeName(LoggerType type) {
 
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
-void logger_init() {
+void logger_init(LoggerOption verboseP, bool showTraceP, const LoggerType showTypesP[5]) {
     if (!fileOpen) {
+        verbose = verboseP;
+        showTrace = showTraceP;
+        for (int i = 0; i < 5; ++i) {
+            showTypes[i] = showTypesP[i];
+        }
+
         bool dirCreated = false;
 
         if (mkdir(LOG_PATH, S_IRWXU) == 0) {
@@ -192,100 +218,107 @@ void logger_init() {
         errno = -1;
         file = fopen(fileName, "w");
         if (errno != -1) {
-            error(CONSOLE_ONLY, "Error log file open : %d\n", errno);
+            ERROR_LOG(CONSOLE_ONLY, "Error log file open : %d\n", errno);
             exit(EXIT_FAILURE);
         }
         fileOpen = true;
 
         if (pthread_mutex_init(&mutex, NULL) != 0) {
-            error(CONSOLE_ONLY, "Error mutex : %d\n", errno);
+            ERROR_LOG(CONSOLE_ONLY, "Error mutex : %d\n", errno);
         }
 
-        info(FILE_ONLY, "Log start\n");
+        INFO_LOG(FILE_ONLY, "Log start\n");
         if (dirCreated)
-            warning(FILE_AND_CONSOLE, "Log directory created\n");
+            WARNING_LOG(FILE_AND_CONSOLE, "Log directory created\n");
     } else
-        warning(FILE_AND_CONSOLE, "Log already init\n");
+        WARNING_LOG(FILE_AND_CONSOLE, "Log already init\n");
 }
 
 void logger_exit() {
     if (fileOpen) {
-        info(FILE_ONLY, "End log\n");
+        INFO_LOG(FILE_ONLY, "End log\n");
         fclose(file);
         file = NULL;
         fileOpen = false;
 
         pthread_mutex_destroy(&mutex);
     } else
-        error(CONSOLE_ONLY, "Please init before exit\n");
+        ERROR_LOG(CONSOLE_ONLY, "Please init before exit\n");
 }
 
-void genericLog(char *message, LoggerType type, LoggerOption option) {
-    if (option != FILE_ONLY)
-        printf("%s%s%s", getTypeColor(type), message, getColor(DEFAULT));
+void genericLog(const char *function, char *message, LoggerType type, LoggerOption option) {
+    char *t = malloc(sizeof(char) * MAX_MESSAGE);
+    if (showTrace) {
+        sprintf(t, "[%s]\t%s", function, message);
+    } else {
+        sprintf(t, "%s", message);
+    }
 
-    if (option != CONSOLE_ONLY) {
+    if (option != FILE_ONLY && verbose != FILE_ONLY && showTypesContains(type))
+        printf("%s%s%s", getTypeColor(type), t, getColor(DEFAULT));
+
+    if (option != CONSOLE_ONLY && verbose != CONSOLE_ONLY) {
         pthread_mutex_lock(&mutex);
-        writeToFile(message, type);
+        writeToFile(t, type);
         pthread_mutex_unlock(&mutex);
     }
 }
 
-void info(LoggerOption option, char *format, ...) {
+void info(const char *function, LoggerOption option, char *format, ...) {
     va_list vaList;
     va_start(vaList, format);
     char *message = malloc(sizeof(char) * MAX_MESSAGE);
     vsprintf(message, format, vaList);
-    genericLog(message, INFO, option);
+    genericLog(function, message, INFO, option);
     va_end(vaList);
 }
 
-void success(LoggerOption option, char *format, ...) {
+void success(const char *function, LoggerOption option, char *format, ...) {
     va_list vaList;
     va_start(vaList, format);
     char *message = malloc(sizeof(char) * MAX_MESSAGE);
     vsprintf(message, format, vaList);
-    genericLog(message, SUCCESS, option);
+    genericLog(function, message, SUCCESS, option);
     va_end(vaList);
 }
 
-void error(LoggerOption option, char *format, ...) {
+void error(const char *function, LoggerOption option, char *format, ...) {
     va_list vaList;
     va_start(vaList, format);
     char *message = malloc(sizeof(char) * MAX_MESSAGE);
     vsprintf(message, format, vaList);
-    genericLog(message, ERROR, option);
+    genericLog(function, message, ERROR, option);
     va_end(vaList);
 }
 
-void warning(LoggerOption option, char *format, ...) {
+void warning(const char *function, LoggerOption option, char *format, ...) {
     va_list vaList;
     va_start(vaList, format);
     char *message = malloc(sizeof(char) * MAX_MESSAGE);
     vsprintf(message, format, vaList);
-    genericLog(message, WARNING, option);
+    genericLog(function, message, WARNING, option);
     va_end(vaList);
 }
 
-void debug(LoggerOption option, char *format, ...) {
+void debug(const char *function, LoggerOption option, char *format, ...) {
     va_list vaList;
     va_start(vaList, format);
     char *message = malloc(sizeof(char) * MAX_MESSAGE);
     vsprintf(message, format, vaList);
-    genericLog(message, DEBUG, option);
+    genericLog(function, message, DEBUG, option);
     va_end(vaList);
 }
 
 void writeToFile(char *message, LoggerType type) {
     if (fileOpen) {
         char *toPrint = malloc(sizeof(char) * MAX_MESSAGE);
-        sprintf(toPrint, "[%d-%s-%s] %s", nbWrite, getHour(), getTypeName(type), message);
+        sprintf(toPrint, "[%d-%s-%s]\t%s", nbWrite, getHour(), getTypeName(type), message);
 
         fwrite(toPrint, 1, strlen(toPrint), file);
         fflush(file);
         nbWrite++;
     } else
-        error(CONSOLE_ONLY, "Please init logger\n");
+        ERROR_LOG(CONSOLE_ONLY, "Please init logger\n");
 }
 
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
@@ -313,4 +346,12 @@ char *getDate() {
             t->tm_sec);
 
     return res;
+}
+
+bool showTypesContains(LoggerType type) {
+    for (int i = 0; i < 5; ++i)
+        if (showTypes[i] == type)
+            return true;
+
+    return false;
 }

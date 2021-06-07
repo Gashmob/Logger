@@ -68,8 +68,11 @@ typedef enum LoggerOption {
 
 /**
  * Initialisation
+ * @param verboseP
+ * @param showTraceP
+ * @param showTypesP
  */
-void logger_init();
+void logger_init(LoggerOption verboseP, bool showTraceP, const LoggerType showTypesP[5]);
 
 /**
  * Quit the log and close the writer
@@ -78,42 +81,53 @@ void logger_exit();
 
 /**
  * Info
+ * @param function const char*
  * @param option LoggerOption
  * @param format char*
  * @param ...
  */
-void info(LoggerOption option, char *format, ...);
+void info(const char* function, LoggerOption option, char *format, ...);
 
 /**
  * Success
+ * @param function const char*
  * @param option LoggerOption
  * @param format char*
  * @param ...
  */
-void success(LoggerOption option, char *format, ...);
+void success(const char* function, LoggerOption option, char *format, ...);
 
 /**
  * Error
+ * @param function const char*
  * @param option LoggerOption
  * @param format char*
  * @param ...
  */
-void error(LoggerOption option, char *format, ...);
+void error(const char* function, LoggerOption option, char *format, ...);
 
 /**
  * Warning
+ * @param function const char*
  * @param option LoggerOption
  * @param format char*
  * @param ...
  */
-void warning(LoggerOption option, char *format, ...);
+void warning(const char* function, LoggerOption option, char *format, ...);
 
 /**
  * Debug
+ * @param function const char*
  * @param option LoggerOption
  * @param format char*
  * @param ...
  */
-void debug(LoggerOption option, char *format, ...);
+void debug(const char* function, LoggerOption option, char *format, ...);
+
+#define INFO_LOG(option, format...) info(__func__, option, format);
+#define SUCCESS_LOG(option, format...) success(__func__, option, format);
+#define ERROR_LOG(option, format...) error(__func__, option, format);
+#define WARNING_LOG(option, format...) warning(__func__, option, format);
+#define DEBUG_LOG(option, format...) debug(__func__, option, format);
 
 #endif //LOGGER_LOGGER_H
