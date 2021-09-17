@@ -207,7 +207,7 @@ public abstract class Logger {
         if (!options.contains(FILE_ONLY) && !options.contains(CONSOLE_ONLY) && verbose == FILE_AND_CONSOLE) {
             for (OutputStream additionalStream : additionalStreams) {
                 try {
-                    additionalStream.write(constructMessage(message.append("\n").toString(), trace, type.toString(), additional_format).getBytes());
+                    additionalStream.write(constructMessage(message.toString(), trace, type.toString(), additional_format).getBytes());
                     additionalStream.flush();
                 } catch (IOException e) {
                     error(e, CONSOLE_ONLY);
