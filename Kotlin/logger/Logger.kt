@@ -34,15 +34,56 @@ internal const val logPath = "./logs"
  */
 internal const val projectName = "project"
 
+// _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
+
+/*
+ * Different rules for the formats :
+ * %Y -> Year
+ * %M -> Month
+ * %D -> Day
+ * %H -> Hour
+ * %m -> Minute
+ * %S -> Second
+ * %N -> Nano second
+ * %d -> Date (%Y-%M-%D@%H-%m-%S)
+ * %h -> Hour (%H:%m:%S:%N)
+ * %T -> Trace
+ * %C -> Content message
+ * %n -> Log number
+ * %t -> Log type
+ */
+
+/**
+ * Format for console log
+ */
+internal const val console_format = "[%T]\t%C"
+
+/**
+ * Format for log file
+ */
+internal const val file_format = "[%n-%h-%t]\t[%T]\t%C"
+
+/**
+ * Format for additional output streams
+ */
+internal const val additional_format = "[%n-%t]\t[%T]\t%C"
+
+// _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
+
 /**
  * The writer for the file
  */
 internal var printWriter: PrintWriter? = null
 
 /**
+ * Additional output for the logs
+ */
+internal var additionalStreams = ArrayList<OutputStream>()
+
+/**
  * The number of log
  */
-internal var nbWrite = 0
+internal var nbLog = 0
 
 /**
  * The type of verbose
@@ -50,26 +91,21 @@ internal var nbWrite = 0
 internal var verbose = FILE_AND_CONSOLE
 
 /**
- * Show trace or not
- */
-internal var showTrace = true
-
-/**
  * The types of logs that be shown
  */
 internal var showTypes = ArrayList<LoggerType>()
+
+// _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
 /**
  * Initialisation
  */
 fun init(
     verboseP: LoggerOption = FILE_AND_CONSOLE,
-    showTraceP: Boolean = true,
     showTypesP: ArrayList<LoggerType> = arrayListOf(INFO, SUCCESS, ERROR, WARNING, DEBUG)
 ) {
     if (printWriter == null) {
         verbose = verboseP
-        showTrace = showTraceP
         showTypes = showTypesP
 
         var dirCreated = false
@@ -111,6 +147,17 @@ fun exit() {
         error("Please init before exit", CONSOLE_ONLY)
 }
 
+// _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
+
+/**
+ * Add a new output for the logs
+ */
+fun addOutputStream(os: OutputStream) {
+    additionalStreams.add(os)
+}
+
+// _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
+
 /**
  * Generic log use for all logs
  */
@@ -137,17 +184,91 @@ internal fun genericLog(args: Array<out Any>, type: LoggerType) {
     }
 
     val traces = Thread.currentThread().stackTrace
-    if (traces.size > 3 && showTrace) {
-        val trace = traces[3]
-        val t = "[" + trace.className + "." + trace.methodName + "]\t"
-        message.insert(0, t)
+    var trace = ""
+    if (traces.size > 3) {
+        val ste = traces[3]
+        trace = ste.className + "." + ste.methodName
     }
 
     if (!options.contains(FILE_ONLY) && verbose != FILE_ONLY && showTypes.contains(type))
-        println(type.color.toString() + message.toString() + LoggerColor.DEFAULT)
+        println(
+            type.color.toString() + constructMessage(
+                message.toString(),
+                trace,
+                type.toString(),
+                console_format
+            ) + LoggerColor.DEFAULT
+        )
 
     if (!options.contains(CONSOLE_ONLY) && verbose != CONSOLE_ONLY)
-        writeToFile(message.toString(), type)
+        writeToFile(constructMessage(message.toString(), trace, type.toString(), file_format), type)
+
+    if (!options.contains(FILE_ONLY) && !options.contains(CONSOLE_ONLY) && verbose == FILE_AND_CONSOLE) {
+        additionalStreams.forEach {
+            try {
+                it.write(constructMessage(message.toString(), trace, type.toString(), additional_format).toByteArray())
+                it.flush()
+            } catch (e: IOException) {
+                error(e, CONSOLE_ONLY)
+            }
+        }
+    }
+
+    nbLog++
+}
+
+/**
+ * Construct the message from the format
+ * <p>
+ * Different rules for the formats :
+ * %Y -> Year
+ * %M -> Month
+ * %D -> Day
+ * %H -> Hour
+ * %m -> Minute
+ * %S -> Second
+ * %N -> Nano second
+ * %d -> Date (%Y-%M-%D@%H-%m-%S)
+ * %h -> Hour (%H:%m:%S:%N)
+ * %T -> Trace
+ * %C -> Content message
+ * %n -> Log number
+ * %t -> Log type
+ */
+internal fun constructMessage(message: String, trace: String, logType: String, format: String): String {
+    val res = StringBuilder()
+
+    var i = 0
+    while (i < format.length) {
+        var c = format[i]
+        if (c == '%') {
+            i++
+            c = format[i]
+
+            val now = LocalDateTime.now()
+            when (c) {
+                'Y' -> res.append(now.year)
+                'M' -> res.append(String.format("%02d", now.monthValue))
+                'D' -> res.append(String.format("%02d", now.dayOfMonth))
+                'H' -> res.append(String.format("%02d", now.hour))
+                'm' -> res.append(String.format("%02d", now.minute))
+                'S' -> res.append(String.format("%02d", now.second))
+                'N' -> res.append(String.format("%03d", now.nano / 1000))
+                'd' -> res.append(getDate())
+                'h' -> res.append(getHour())
+                'T' -> res.append(trace)
+                'C' -> res.append(message)
+                'n' -> res.append(nbLog)
+                't' -> res.append(logType)
+            }
+        } else {
+            res.append(c)
+        }
+
+        i++
+    }
+
+    return res.toString()
 }
 
 /**
@@ -175,6 +296,8 @@ fun warning(vararg args: Any) = genericLog(args, WARNING)
  */
 fun debug(vararg args: Any) = genericLog(args, DEBUG)
 
+// _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
+
 /**
  * Write the log into the file
  */
@@ -182,17 +305,18 @@ fun debug(vararg args: Any) = genericLog(args, DEBUG)
 internal fun writeToFile(message: String, type: LoggerType) {
     if (printWriter != null) {
         val toPrint = ("["
-                + nbWrite + "-"
+                + nbLog + "-"
                 + getHour() + "-"
                 + type.toString() + "]\t"
                 + message)
 
         printWriter!!.println(toPrint)
-        nbWrite++
         printWriter!!.flush()
     } else
         error("Please init Logger", CONSOLE_ONLY)
 }
+
+// _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
 /**
  * The log's hour
