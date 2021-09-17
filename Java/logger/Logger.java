@@ -204,7 +204,7 @@ public abstract class Logger {
             writeToFile(constructMessage(message.toString(), trace, type.toString(), file_format), type);
         }
 
-        if (!options.contains(FILE_ONLY) && !options.contains(CONSOLE_ONLY)) {
+        if (!options.contains(FILE_ONLY) && !options.contains(CONSOLE_ONLY) && verbose == FILE_AND_CONSOLE) {
             for (OutputStream additionalStream : additionalStreams) {
                 try {
                     additionalStream.write(constructMessage(message.append("\n").toString(), trace, type.toString(), additional_format).getBytes());
