@@ -172,7 +172,7 @@ class Logger:
                   LoggerColor.DEFAULT.value[0])
 
         if LoggerOption.CONSOLE_ONLY not in options and cls.__verbose != LoggerOption.CONSOLE_ONLY:
-            cls.__write_to_file(cls.__construct_message(message, trace, name, file_format) + "\n", log_type)
+            cls.__write_to_file(cls.__construct_message(message, trace, name, file_format) + "\n")
 
         if LoggerOption.CONSOLE_ONLY not in options and LoggerOption.FILE_ONLY not in options and cls.__verbose == LoggerOption.FILE_AND_CONSOLE:
             for output in cls.__additionalStreams:
@@ -266,7 +266,7 @@ class Logger:
         cls.__genericLog(args, LoggerType.DEBUG)
 
     @classmethod
-    def __write_to_file(cls, message, log_type):
+    def __write_to_file(cls, message):
         """Write the message into the file"""
         if cls.__file is not None:
             cls.__file.write(message)
