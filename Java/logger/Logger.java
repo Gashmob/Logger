@@ -201,13 +201,13 @@ public abstract class Logger {
         }
 
         if (!options.contains(CONSOLE_ONLY) && verbose != CONSOLE_ONLY) {
-            writeToFile(constructMessage(message.toString(), trace, type.toString(), file_format), type);
+            writeToFile(constructMessage(message.toString(), trace, type.toString(), file_format));
         }
 
         if (!options.contains(FILE_ONLY) && !options.contains(CONSOLE_ONLY) && verbose == FILE_AND_CONSOLE) {
             for (OutputStream additionalStream : additionalStreams) {
                 try {
-                    additionalStream.write(constructMessage(message.toString(), trace, type.toString(), additional_format).getBytes());
+                    additionalStream.write((constructMessage(message.toString(), trace, type.toString(), additional_format) + "\n").getBytes());
                     additionalStream.flush();
                 } catch (IOException e) {
                     error(e, CONSOLE_ONLY);
@@ -329,17 +329,10 @@ public abstract class Logger {
      * Write the log into the file
      *
      * @param message String
-     * @param type    LoggerType
      */
-    private synchronized static void writeToFile(String message, LoggerType type) {
+    private synchronized static void writeToFile(String message) {
         if (printWriter != null) {
-            String toPrint = "["
-                    + nbLog + "-"
-                    + getHour() + "-"
-                    + type.toString() + "]\t"
-                    + message;
-
-            printWriter.println(toPrint);
+            printWriter.println(message);
             printWriter.flush();
         } else {
             error("Please init Logger", CONSOLE_ONLY);
