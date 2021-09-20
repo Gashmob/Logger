@@ -22,6 +22,32 @@ projectName = "project"
 """The log directory's path
 Change it with your path"""
 
+"""
+Different rules for the formats :
+%Y -> Year
+%M -> Month
+%D -> Day
+%H -> Hour
+%m -> Minute
+%S -> Second
+%N -> Nano second
+%d -> Date (%Y-%M-%D@%H-%m-%S)
+%h -> Hour (%H:%m:%S:%N)
+%T -> Trace
+%C -> Content message
+%n -> Log number
+%t -> Log type
+"""
+
+console_format = "[%T]\t%C"
+"""Format for console log"""
+
+file_format = "[%n-%h-%t]\t[%T]\t%C"
+"""Format for the log file"""
+
+additional_format = "[%n-%t]\t[%T]\t%C"
+"""Format for additional output streams"""
+
 
 class LoggerColor(Enum):
     """Log colors
@@ -68,13 +94,14 @@ class Logger:
 
     __file = None
     """The file where we write logs"""
-    __nbWrite = 0
+    __additionalStreams = []
+    """Additional output for the logs"""
+    __nbLog = 0
     """The number of log"""
     __verbose = LoggerOption.FILE_AND_CONSOLE
     """The type of verbose"""
-    __showTrace = True
-    """Show trace or not"""
     __showTypes = (LoggerType.INFO, LoggerType.SUCCESS, LoggerType.ERROR, LoggerType.WARNING, LoggerType.DEBUG)
+    """The types of log that be shown"""
 
     @classmethod
     def init(cls, verbose=LoggerOption.FILE_AND_CONSOLE, showTrace=True,
@@ -90,9 +117,8 @@ class Logger:
             if not os.path.exists(logPath):
                 os.mkdir(logPath)
                 dir_created = True
-            os.chdir(logPath)
 
-            cls.__file = open(projectName + "_log_" + cls.__getDate() + ".log", "w")
+            cls.__file = open(logPath + "/" + projectName + "_log_" + cls.__getDate() + ".log", "w")
             cls.info("Log start", LoggerOption.FILE_ONLY)
 
             if dir_created:
@@ -111,6 +137,10 @@ class Logger:
             cls.error("Please init before exit", LoggerOption.CONSOLE_ONLY)
 
     @classmethod
+    def addOutputStream(cls, output):
+        cls.__additionalStreams.append(output)
+
+    @classmethod
     def __genericLog(cls, args, log_type):
         """Generic log use for all logs"""
         messages = []
@@ -127,20 +157,88 @@ class Logger:
             message += str(m) + " "
 
         traces = traceback.extract_stack()
-        if len(traces) > 2 and cls.__showTrace:
-            trace = traces[2]
-            t = "[" + trace.name + "]\t"
-            message = t + message
+        trace = ""
+        if len(traces) > 2:
+            fs = traces[2]
+            trace = fs.name
+
+        if len(log_type.value) == 1:
+            name, color = log_type.value[0]
+        else:
+            name, color = log_type.value
 
         if LoggerOption.FILE_ONLY not in options and cls.__verbose != LoggerOption.FILE_ONLY and log_type in cls.__showTypes:
-            if len(log_type.value) == 1:
-                name, color = log_type.value[0]
-            else:
-                name, color = log_type.value
-            print(color.value[0] + message + LoggerColor.DEFAULT.value[0])
+            print(color.value[0] + cls.__construct_message(message, trace, name, console_format) +
+                  LoggerColor.DEFAULT.value[0])
 
         if LoggerOption.CONSOLE_ONLY not in options and cls.__verbose != LoggerOption.CONSOLE_ONLY:
-            cls.__write_to_file(message, log_type)
+            cls.__write_to_file(cls.__construct_message(message, trace, name, file_format) + "\n", log_type)
+
+        if LoggerOption.CONSOLE_ONLY not in options and LoggerOption.FILE_ONLY not in options and cls.__verbose == LoggerOption.FILE_AND_CONSOLE:
+            for output in cls.__additionalStreams:
+                output.write(cls.__construct_message(message, trace, name, additional_format) + "\n")
+                output.flush()
+
+        cls.__nbLog += 1
+
+    @classmethod
+    def __construct_message(cls, message, trace, logType, format):
+        """Construct the message from the format
+        Different rules for the formats :
+        %Y -> Year
+        %M -> Month
+        %D -> Day
+        %H -> Hour
+        %m -> Minute
+        %S -> Second
+        %N -> Nano second
+        %d -> Date (%Y-%M-%D@%H-%m-%S)
+        %h -> Hour (%H:%m:%S:%N)
+        %T -> Trace
+        %C -> Content message
+        %n -> Log number
+        %t -> Log type"""
+        res = ""
+
+        i = 0
+        while i < len(format):
+            c = format[i]
+            if c == '%':
+                i += 1
+                c = format[i]
+
+                date = datetime.now()
+                if c == 'Y':
+                    res += date.year
+                elif c == 'M':
+                    res += date.month
+                elif c == 'D':
+                    res += date.day
+                elif c == 'H':
+                    res += date.hour
+                elif c == 'm':
+                    res += date.minute
+                elif c == 'S':
+                    res += date.second
+                elif c == 'N':
+                    res += date.microsecond
+                elif c == 'd':
+                    res += cls.__getDate()
+                elif c == 'h':
+                    res += cls.__getHour()
+                elif c == 'T':
+                    res += trace
+                elif c == 'C':
+                    res += message
+                elif c == 'n':
+                    res += str(cls.__nbLog)
+                elif c == 't':
+                    res += logType
+            else:
+                res += c
+            i += 1
+
+        return res
 
     @classmethod
     def info(cls, *args):
@@ -169,11 +267,9 @@ class Logger:
 
     @classmethod
     def __write_to_file(cls, message, log_type):
-        """Write the into the file"""
+        """Write the message into the file"""
         if cls.__file is not None:
-            cls.__file.write(
-                "[" + str(cls.__nbWrite) + "-" + cls.__getHour() + "-" + log_type.name + "]\t" + message + "\n")
-            cls.__nbWrite += 1
+            cls.__file.write(message)
             cls.__file.flush()
         else:
             cls.error("Please init logger", LoggerOption.CONSOLE_ONLY)
