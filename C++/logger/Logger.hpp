@@ -41,6 +41,40 @@
  */
 #define PROJECT_NAME "project"
 
+/*
+ * Different rules for the formats :
+ * %Y -> Year
+ * %M -> Month
+ * %D -> Day
+ * %H -> Hour
+ * %m -> Minute
+ * %S -> Second
+ * %N -> Nano second
+ * %d -> Date (%Y-%M-%D@%H-%m-%S)
+ * %h -> Hour (%H:%m:%S:%N)
+ * %T -> Trace
+ * %C -> Content message
+ * %n -> Log number
+ * %t -> Log type
+ */
+
+/**
+ * Format for console log
+ */
+#define CONSOLE_FORMAT "[%T]\t%C"
+
+/**
+ * Format for log file
+ */
+#define FILE_FORMAT "[%n-%h-%t]\t[%T]\t%C"
+
+/**
+ * Format for additional output stream
+ */
+#define ADDITIONAL_FORMAT "[%n-%t]\t[%T]\t%C"
+
+// _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
+
 /**
  * Log colors
  * Use DEFAULT for reset color
@@ -87,6 +121,8 @@ typedef enum LoggerOption {
     FILE_AND_CONSOLE
 } LoggerOption;
 
+// _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
+
 class Logger {
 private:
     /**
@@ -115,13 +151,17 @@ public:
      * Initialisation
      */
     static void init(LoggerOption verboseP = FILE_AND_CONSOLE,
-                     bool showTraceP = true,
                      const std::vector<LoggerType> &showTypesP = {INFO, SUCCESS, ERROR, WARNING, DEBUG});
 
     /**
      * Quit the log and close the writer
      */
     static void exit();
+
+    /**
+     * Add a new output for the logs
+     */
+    static void addOutputStream(std::ostream *os);
 
 public:
     /**
@@ -192,14 +232,41 @@ private:
      * @param type LoggerType
      * @param option LoggerOption
      */
-    static void genericLog(const std::string &function, const std::string &message, LoggerType type, LoggerOption option);
+    static void
+    genericLog(const std::string &function, const std::string &message, LoggerType type, LoggerOption option);
+
+    /**
+     * Construct the message from the format
+     * Different rules for the formats :
+     * %Y -> Year
+     * %M -> Month
+     * %D -> Day
+     * %H -> Hour
+     * %m -> Minute
+     * %S -> Second
+     * %N -> Nano second
+     * %d -> Date (%Y-%M-%D@%H-%m-%S)
+     * %h -> Hour (%H:%m:%S:%N)
+     * %T -> Trace
+     * %C -> Content message
+     * %n -> Log number
+     * %t -> Log type
+     *
+     * @param message
+     * @param trace
+     * @param logType
+     * @param format
+     * @return
+     */
+    static std::string
+    constructMessage(const std::string &message, const std::string &trace, const std::string &logType,
+                     const std::string &format);
 
     /**
      * Write the log into the file
      * @param message std::string
-     * @param type LoggerType
      */
-    static void writeToFile(const std::string &message, LoggerType type);
+    static void writeToFile(const std::string &message);
 
     /**
      * The log's hour
@@ -221,9 +288,13 @@ private:
      */
     static std::ofstream file;
     /**
+     * Additional output for the logs
+     */
+    static std::vector<std::ostream *> additionalStreams;
+    /**
      * The number of log
      */
-    static int nbWrite;
+    static int nbLog;
     /**
      * A mutex for writeToFile(), to be thread-safe
      */
@@ -232,10 +303,6 @@ private:
      * The type of verbose
      */
     static LoggerOption verbose;
-    /**
-     * Show trace or not
-     */
-    static bool showTrace;
     /**
      * The types of logs that be shown
      */
