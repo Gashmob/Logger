@@ -201,12 +201,12 @@ internal fun genericLog(args: Array<out Any>, type: LoggerType) {
         )
 
     if (!options.contains(CONSOLE_ONLY) && verbose != CONSOLE_ONLY)
-        writeToFile(constructMessage(message.toString(), trace, type.toString(), file_format), type)
+        writeToFile(constructMessage(message.toString(), trace, type.toString(), file_format))
 
     if (!options.contains(FILE_ONLY) && !options.contains(CONSOLE_ONLY) && verbose == FILE_AND_CONSOLE) {
         additionalStreams.forEach {
             try {
-                it.write(constructMessage(message.toString(), trace, type.toString(), additional_format).toByteArray())
+                it.write((constructMessage(message.toString(), trace, type.toString(), additional_format) + "\n").toByteArray())
                 it.flush()
             } catch (e: IOException) {
                 error(e, CONSOLE_ONLY)
@@ -219,7 +219,6 @@ internal fun genericLog(args: Array<out Any>, type: LoggerType) {
 
 /**
  * Construct the message from the format
- * <p>
  * Different rules for the formats :
  * %Y -> Year
  * %M -> Month
@@ -302,15 +301,9 @@ fun debug(vararg args: Any) = genericLog(args, DEBUG)
  * Write the log into the file
  */
 @Synchronized
-internal fun writeToFile(message: String, type: LoggerType) {
+internal fun writeToFile(message: String) {
     if (printWriter != null) {
-        val toPrint = ("["
-                + nbLog + "-"
-                + getHour() + "-"
-                + type.toString() + "]\t"
-                + message)
-
-        printWriter!!.println(toPrint)
+        printWriter!!.println(message)
         printWriter!!.flush()
     } else
         error("Please init Logger", CONSOLE_ONLY)
