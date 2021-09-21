@@ -59,11 +59,35 @@ char *getTypeName(LoggerType type);
 void genericLog(const char *function, char *message, LoggerType type, LoggerOption option);
 
 /**
+ * Construct the message from the format
+ * Different rules for the formats :
+ * %Y -> Year
+ * %M -> Month
+ * %D -> Day
+ * %H -> Hour
+ * %m -> Minute
+ * %S -> Second
+ * %N -> Nano second
+ * %d -> Date (%Y-%M-%D@%H-%m-%S)
+ * %h -> Hour (%H:%m:%S:%N)
+ * %T -> Trace
+ * %C -> Content message
+ * %n -> Log number
+ * %t -> Log type
+ *
+ * @param message
+ * @param trace
+ * @param logType
+ * @param format
+ * @return
+ */
+char *constructMessage(const char *message, const char *trace, const char *logType, const char *format);
+
+/**
  * Write the log into the file
  * @param message char*
- * @param type LoggerType
  */
-void writeToFile(char *message, LoggerType type);
+void writeToFile(char *message);
 
 /**
  * The log's hour
@@ -93,13 +117,21 @@ bool showTypesContains(LoggerType type);
  */
 FILE *file = NULL;
 /**
+ * Additional output for the logs
+ */
+FILE **additionalStreams;
+/**
+ * Number of additional stream added
+ */
+unsigned int nbAddStream = 0;
+/**
  * If the file is open
  */
 bool fileOpen = false;
 /**
  * The number of log
  */
-int nbWrite = 0;
+int nbLog = 0;
 /**
  * A mutex to be thread safe when write to file
  */
@@ -108,10 +140,6 @@ pthread_mutex_t mutex;
  * The type of verbose
  */
 LoggerOption verbose;
-/**
- * Show trace or not
- */
-bool showTrace;
 /**
  * The type of logs that be shown
  */
@@ -199,10 +227,10 @@ char *getTypeName(LoggerType type) {
 
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
-void logger_init(LoggerOption verboseP, bool showTraceP, const LoggerType showTypesP[5]) {
+void logger_init(LoggerOption verboseP, const LoggerType showTypesP[5]) {
     if (!fileOpen) {
+        additionalStreams = calloc(MAX_ADDITIONAL_STREAM, sizeof(FILE));
         verbose = verboseP;
-        showTrace = showTraceP;
         for (int i = 0; i < 5; ++i) {
             showTypes[i] = showTypesP[i];
         }
@@ -246,22 +274,109 @@ void logger_exit() {
         ERROR_LOG(CONSOLE_ONLY, "Please init before exit\n");
 }
 
-void genericLog(const char *function, char *message, LoggerType type, LoggerOption option) {
-    char *t = malloc(sizeof(char) * MAX_MESSAGE);
-    if (showTrace) {
-        sprintf(t, "[%s]\t%s", function, message);
-    } else {
-        sprintf(t, "%s", message);
-    }
+void logger_addOutputStream(FILE *stream) {
+    additionalStreams[nbAddStream++] = stream;
+}
 
+void genericLog(const char *function, char *message, LoggerType type, LoggerOption option) {
     if (option != FILE_ONLY && verbose != FILE_ONLY && showTypesContains(type))
-        printf("%s%s%s", getTypeColor(type), t, getColor(DEFAULT));
+        printf("%s%s%s", getTypeColor(type), constructMessage(message, function, getTypeName(type), CONSOLE_FORMAT),
+               getColor(DEFAULT));
 
     if (option != CONSOLE_ONLY && verbose != CONSOLE_ONLY) {
         pthread_mutex_lock(&mutex);
-        writeToFile(t, type);
+        writeToFile(constructMessage(message, function, getTypeName(type), FILE_FORMAT));
         pthread_mutex_unlock(&mutex);
     }
+
+    if (option != CONSOLE_ONLY && option != FILE_ONLY && verbose == FILE_AND_CONSOLE) {
+        for (int i = 0; i < nbAddStream; i++) {
+            pthread_mutex_lock(&mutex);
+            char *m = constructMessage(message, function, getTypeName(type), ADDITIONAL_FORMAT);
+            fwrite(m, sizeof(char), strlen(m), additionalStreams[i]);
+            pthread_mutex_unlock(&mutex);
+        }
+    }
+
+    nbLog++;
+}
+
+char *constructMessage(const char *message, const char *trace, const char *logType, const char *format) {
+    char *res = malloc(sizeof(char) * MAX_MESSAGE);
+    res[0] = '\0';
+
+    int i = 0;
+    while (i < strlen(format)) {
+        char c = format[i];
+        if (c == '%') {
+            i++;
+            c = format[i];
+
+            struct timespec now;
+            clock_gettime(CLOCK_REALTIME, &now);
+            struct tm *t = localtime(&now.tv_sec);
+            char *temp = malloc(sizeof(char) * 10);
+            switch (c) {
+                case 'Y':
+                    sprintf(temp, "%4d", t->tm_year + 1900);
+                    strcat(res, temp);
+                    break;
+                case 'M':
+                    sprintf(temp, "%02d", t->tm_mon + 1);
+                    strcat(res, temp);
+                    break;
+                case 'D':
+                    sprintf(temp, "%02d", t->tm_mday);
+                    strcat(res, temp);
+                    break;
+                case 'H':
+                    sprintf(temp, "%02d", t->tm_hour);
+                    strcat(res, temp);
+                    break;
+                case 'm':
+                    sprintf(temp, "%02d", t->tm_min);
+                    strcat(res, temp);
+                    break;
+                case 'S':
+                    sprintf(temp, "%02d", t->tm_sec);
+                    strcat(res, temp);
+                    break;
+                case 'N':
+                    sprintf(temp, "%03ld", now.tv_nsec);
+                    strcat(res, temp);
+                    break;
+                case 'd':
+                    strcat(res, getDate());
+                    break;
+                case 'h':
+                    strcat(res, getHour());
+                    break;
+                case 'T':
+                    strcat(res, trace);
+                    break;
+                case 'C':
+                    strcat(res, message);
+                    break;
+                case 'n':
+                    sprintf(temp, "%d", nbLog);
+                    strcat(res, temp);
+                    break;
+                case 't':
+                    strcat(res, logType);
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            char *temp = malloc(sizeof(char) * 2);
+            temp[1] = '\0';
+            temp[0] = c;
+            strcat(res, temp);
+        }
+        i++;
+    }
+
+    return res;
 }
 
 void info(const char *function, LoggerOption option, char *format, ...) {
@@ -309,14 +424,10 @@ void debug(const char *function, LoggerOption option, char *format, ...) {
     va_end(vaList);
 }
 
-void writeToFile(char *message, LoggerType type) {
+void writeToFile(char *message) {
     if (fileOpen) {
-        char *toPrint = malloc(sizeof(char) * MAX_MESSAGE);
-        sprintf(toPrint, "[%d-%s-%s]\t%s", nbWrite, getHour(), getTypeName(type), message);
-
-        fwrite(toPrint, 1, strlen(toPrint), file);
+        fwrite(message, sizeof(char), strlen(message), file);
         fflush(file);
-        nbWrite++;
     } else
         ERROR_LOG(CONSOLE_ONLY, "Please init logger\n");
 }
