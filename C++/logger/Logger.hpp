@@ -12,15 +12,15 @@
 #include <vector>
 #include <algorithm>
 
-/**
+/*
  * Logger
- * <p>
+ *
  * Use Logger::init() to start the logger and Logger::exit() to close the logger
- * <p>
+ *
  * Simple usage :
  * DEBUG_LOG(FILE_AND_CONSOLE, "Is it simple ? YES");
  * Write 'Is it simple ? YES' (without the quote) in the console and the file
- * <p>
+ *
  * Complex usage :
  * INFO_LOG(CONSOLE_ONLY, "Not too complex ? ", "Maybe");
  * Write 'Not toot complex ? Maybe' (without the quote) only in the console
@@ -278,7 +278,7 @@ private:
     /**
      * The log's date
      * yyyy-mm-dd@hh-mm-ss
-     * @return
+     * @return std::string
      */
     static std::string getDate();
 

@@ -13,15 +13,15 @@ import java.util.Arrays;
 import static logger.enums.LoggerOption.*;
 import static logger.enums.LoggerType.*;
 
-/**
+/*
  * Logger
- * <p>
- * Use init() to start the logger and exit() to close the logger
- * <p>
+ *
+ * Use Logger.init() to start the logger and Logger.exit() to close the logger
+ *
  * Simple usage :
  * Logger.debug("Is it simple ? YES");
  * Write 'Is it simple ? YES' (without the quote) in the console and the file
- * <p>
+ *
  * Complex usage :
  * Logger.info("Not too complex ?", "Maybe", LoggerOption.CONSOLE_ONLY);
  * Write 'Not toot complex ? Maybe' (without the quote) only in the console

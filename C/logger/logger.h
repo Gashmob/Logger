@@ -13,17 +13,17 @@
 #include <errno.h>
 #include <string.h>
 
-/**
+/*
  * Logger
- * <p>
+ *
  * Use logger_init() to start the logger and logger_exit() to close the logger
- * <p>
+ *
  * Simple usage :
- * debug(FILE_AND_CONSOLE, "Is it simple ? YES");
+ * DEBUG_LOG(FILE_AND_CONSOLE, "Is it simple ? YES");
  * Write 'Is it simple ? YES' (without the quote) in the console and the file
- * <p>
+ *
  * Complex usage :
- * info(CONSOLE_ONLY, "Not too complex ?", "Maybe");
+ * INFO_LOG(CONSOLE_ONLY, "Not too complex ?", "Maybe");
  * Write 'Not toot complex ? Maybe' (without the quote) only in the console
  *
  * <!> WARNING <!>
