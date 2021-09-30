@@ -13,15 +13,15 @@ import java.util.Arrays;
 import static logger.enums.LoggerOption.*;
 import static logger.enums.LoggerType.*;
 
-/**
+/*
  * Logger
- * <p>
- * Use init() to start the logger and exit() to close the logger
- * <p>
+ *
+ * Use Logger.init() to start the logger and Logger.exit() to close the logger
+ *
  * Simple usage :
  * Logger.debug("Is it simple ? YES");
  * Write 'Is it simple ? YES' (without the quote) in the console and the file
- * <p>
+ *
  * Complex usage :
  * Logger.info("Not too complex ?", "Maybe", LoggerOption.CONSOLE_ONLY);
  * Write 'Not toot complex ? Maybe' (without the quote) only in the console
@@ -38,54 +38,86 @@ public abstract class Logger {
      */
     private final static String projectName = "project";
 
+    // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
+
+    /*
+     * Different rules for the formats :
+     * %Y -> Year
+     * %M -> Month
+     * %D -> Day
+     * %H -> Hour
+     * %m -> Minute
+     * %S -> Second
+     * %N -> Nano second
+     * %d -> Date (%Y-%M-%D@%H-%m-%S)
+     * %h -> Hour (%H:%m:%S:%N)
+     * %T -> Trace
+     * %C -> Content message
+     * %n -> Log number
+     * %t -> Log type
+     */
+
+    /**
+     * Format for console log
+     */
+    private final static String console_format = "[%T]\t%C";
+    /**
+     * Format for log file
+     */
+    private final static String file_format = "[%n-%h-%t]\t[%T]\t%C";
+    /**
+     * Format for additional output streams
+     */
+    private final static String additional_format = "[%n-%t]\t[%T]\t%C";
+
+    // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
+
     /**
      * The writer for the file
      */
     private static PrintWriter printWriter = null;
     /**
+     * Additional output for the logs
+     */
+    private static ArrayList<OutputStream> additionalStreams;
+    /**
      * The number of log
      */
-    private static int nbWrite = 0;
+    private static int nbLog = 0;
     /**
      * The type of verbose
      */
     private static LoggerOption verbose;
     /**
-     * Show trace or not
-     */
-    private static Boolean showTrace;
-    /**
      * The types of logs that be shown
      */
     private static ArrayList<LoggerType> showTypes;
 
+    // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
+
     public static void init() {
-        init(FILE_AND_CONSOLE, true, new LoggerType[]{INFO, SUCCESS, ERROR, WARNING, DEBUG});
+        init(FILE_AND_CONSOLE, new LoggerType[]{INFO, SUCCESS, ERROR, WARNING, DEBUG});
     }
 
     public static void init(LoggerOption verbose) {
-        init(verbose, true, new LoggerType[]{INFO, SUCCESS, ERROR, WARNING, DEBUG});
-    }
-
-    public static void init(Boolean showTrace) {
-        init(FILE_AND_CONSOLE, showTrace, new LoggerType[]{INFO, SUCCESS, ERROR, WARNING, DEBUG});
+        init(verbose, new LoggerType[]{INFO, SUCCESS, ERROR, WARNING, DEBUG});
     }
 
     public static void init(LoggerType[] showTypes) {
-        init(FILE_AND_CONSOLE, true, showTypes);
+        init(FILE_AND_CONSOLE, showTypes);
     }
 
     /**
      * Initialisation
-     * @param verbose LoggerOption
-     * @param showTrace Boolean
+     *
+     * @param verbose   LoggerOption
      * @param showTypes LoggerType
      */
-    public static void init(LoggerOption verbose, Boolean showTrace, LoggerType[] showTypes) {
+    public static void init(LoggerOption verbose, LoggerType[] showTypes) {
         if (printWriter == null) {
             Logger.verbose = verbose;
-            Logger.showTrace = showTrace;
             Logger.showTypes = new ArrayList<>(Arrays.asList(showTypes));
+            additionalStreams = new ArrayList<>();
 
             boolean ok;
             boolean dirCreated = false;
@@ -117,6 +149,19 @@ public abstract class Logger {
         }
     }
 
+    // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
+
+    /**
+     * Add a new output for the logs
+     *
+     * @param os OutputStream
+     */
+    public static void addOutputStream(OutputStream os) {
+        additionalStreams.add(os);
+    }
+
+    // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
+
     /**
      * Generic log use for all logs
      *
@@ -139,28 +184,98 @@ public abstract class Logger {
 
         StringBuilder message = new StringBuilder();
 
-        for (int i = 0; i < messages.size(); i++) {
-            message.append(messages.get(i));
-
-            if (i < messages.size()) {
-                message.append(separator);
-            }
+        for (String s : messages) {
+            message.append(s);
+            message.append(separator);
         }
 
         StackTraceElement[] traces = Thread.currentThread().getStackTrace();
-        if (traces.length > 3 && showTrace) {
-            StackTraceElement trace = traces[3];
-            String t = "[" + trace.getClassName() + "." + trace.getMethodName() + "]\t";
-            message.insert(0, t);
+        String trace = "";
+        if (traces.length > 3) {
+            StackTraceElement ste = traces[3];
+            trace = ste.getClassName() + "." + ste.getMethodName();
         }
 
         if (!options.contains(FILE_ONLY) && verbose != FILE_ONLY && showTypes.contains(type)) {
-            System.out.println(type.getColor() + message.toString() + LoggerColor.DEFAULT);
+            System.out.println(type.getColor() + constructMessage(message.toString(), trace, type.toString(), console_format) + LoggerColor.DEFAULT);
         }
 
         if (!options.contains(CONSOLE_ONLY) && verbose != CONSOLE_ONLY) {
-            writeToFile(message.toString(), type);
+            writeToFile(constructMessage(message.toString(), trace, type.toString(), file_format));
         }
+
+        if (!options.contains(FILE_ONLY) && !options.contains(CONSOLE_ONLY) && verbose == FILE_AND_CONSOLE) {
+            for (OutputStream additionalStream : additionalStreams) {
+                try {
+                    additionalStream.write((constructMessage(message.toString(), trace, type.toString(), additional_format) + "\n").getBytes());
+                    additionalStream.flush();
+                } catch (IOException e) {
+                    error(e, CONSOLE_ONLY);
+                }
+            }
+        }
+
+        nbLog++;
+    }
+
+    /**
+     * Construct the message from the format
+     * <p>
+     * Different rules for the formats :
+     * %Y -> Year
+     * %M -> Month
+     * %D -> Day
+     * %H -> Hour
+     * %m -> Minute
+     * %S -> Second
+     * %N -> Nano second
+     * %d -> Date (%Y-%M-%D@%H-%m-%S)
+     * %h -> Hour (%H:%m:%S:%N)
+     * %T -> Trace
+     * %C -> Content message
+     * %n -> Log number
+     * %t -> Log type
+     *
+     * @param message String
+     * @param trace   String
+     * @param logType String
+     * @param format  String
+     * @return String
+     */
+    private static String constructMessage(String message, String trace, String logType, String format) {
+        StringBuilder res = new StringBuilder();
+
+        int i = 0;
+        while (i < format.length()) {
+            char c = format.charAt(i);
+            if (c == '%') {
+                i++;
+                c = format.charAt(i);
+
+                LocalDateTime now = LocalDateTime.now();
+                switch (c) {
+                    case 'Y' -> res.append(now.getYear());
+                    case 'M' -> res.append(String.format("%02d", now.getMonthValue()));
+                    case 'D' -> res.append(String.format("%02d", now.getDayOfMonth()));
+                    case 'H' -> res.append(String.format("%02d", now.getHour()));
+                    case 'm' -> res.append(String.format("%02d", now.getMinute()));
+                    case 'S' -> res.append(String.format("%02d", now.getSecond()));
+                    case 'N' -> res.append(String.format("%03d", now.getNano() / 1000));
+                    case 'd' -> res.append(getDate());
+                    case 'h' -> res.append(getHour());
+                    case 'T' -> res.append(trace);
+                    case 'C' -> res.append(message);
+                    case 'n' -> res.append(nbLog);
+                    case 't' -> res.append(logType);
+                }
+            } else {
+                res.append(c);
+            }
+
+            i++;
+        }
+
+        return res.toString();
     }
 
     /**
@@ -208,27 +323,23 @@ public abstract class Logger {
         genericLog(args, DEBUG);
     }
 
+    // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
+
     /**
      * Write the log into the file
      *
      * @param message String
-     * @param type    LoggerType
      */
-    private synchronized static void writeToFile(String message, LoggerType type) {
+    private synchronized static void writeToFile(String message) {
         if (printWriter != null) {
-            String toPrint = "["
-                    + nbWrite + "-"
-                    + getHour() + "-"
-                    + type.toString() + "]\t"
-                    + message;
-
-            printWriter.println(toPrint);
-            nbWrite++;
+            printWriter.println(message);
             printWriter.flush();
         } else {
             error("Please init Logger", CONSOLE_ONLY);
         }
     }
+
+    // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
     /**
      * The log's hour
@@ -261,6 +372,8 @@ public abstract class Logger {
                 + "-" + String.format("%02d", now.getMinute())
                 + "-" + String.format("%02d", now.getSecond());
     }
+
+    // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
     /**
      * Quit the log and close the writer

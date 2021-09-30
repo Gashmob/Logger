@@ -2,13 +2,13 @@
 
 std::ofstream Logger::file("");
 
-int Logger::nbWrite = 0;
+std::vector<std::ostream *> Logger::additionalStreams = std::vector<std::ostream *>();
+
+int Logger::nbLog = 0;
 
 pthread_mutex_t Logger::mutex;
 
 LoggerOption Logger::verbose = FILE_AND_CONSOLE;
-
-bool Logger::showTrace = true;
 
 std::vector<LoggerType> Logger::showTypes = {INFO, SUCCESS, ERROR, WARNING, DEBUG};
 
@@ -93,10 +93,9 @@ std::string Logger::getTypeName(LoggerType type) {
     }
 }
 
-void Logger::init(LoggerOption verboseP, bool showTraceP, const std::vector<LoggerType> &showTypesP) {
+void Logger::init(LoggerOption verboseP, const std::vector<LoggerType> &showTypesP) {
     if (!file.is_open()) {
         verbose = verboseP;
-        showTrace = showTraceP;
         showTypes = showTypesP;
 
         bool dirCreated = false;
@@ -107,7 +106,7 @@ void Logger::init(LoggerOption verboseP, bool showTraceP, const std::vector<Logg
         std::string fileName = (LOG_PATH "/" PROJECT_NAME "_log_") + getDate() + ".log";
         file.open(fileName, std::ios::out);
 
-        nbWrite = 0;
+        nbLog = 0;
 
         if (pthread_mutex_init(&mutex, nullptr) != 0)
             ERROR_LOG(CONSOLE_ONLY, "Error mutex : %d\n", errno);
@@ -129,12 +128,12 @@ void Logger::exit() {
         ERROR_LOG(CONSOLE_ONLY, "Please init before exit\n");
 }
 
+void Logger::addOutputStream(std::ostream *os) {
+    additionalStreams.push_back(os);
+}
+
 void Logger::genericLog(const std::string &function, const std::string &message, LoggerType type, LoggerOption option) {
     std::string t = message;
-
-    if (showTrace) {
-        t = "[" + function + "]\t" + message;
-    }
 
     if (t[t.length() - 1] != '\n') {
         t += "\n";
@@ -142,22 +141,97 @@ void Logger::genericLog(const std::string &function, const std::string &message,
 
     if (option != FILE_ONLY && verbose != FILE_ONLY &&
         std::find(showTypes.begin(), showTypes.end(), type) != showTypes.end())
-        std::cout << getTypeColor(type) << t << getColor(DEFAULT);
+        std::cout << getTypeColor(type) << constructMessage(t, function, getTypeName(type), CONSOLE_FORMAT)
+                  << getColor(DEFAULT);
 
     if (option != CONSOLE_ONLY && verbose != CONSOLE_ONLY) {
         pthread_mutex_lock(&mutex);
-        writeToFile(t, type);
+        writeToFile(constructMessage(t, function, getTypeName(type), FILE_FORMAT));
         pthread_mutex_unlock(&mutex);
     }
+
+    if (option != CONSOLE_ONLY && option != FILE_ONLY && verbose == FILE_AND_CONSOLE) {
+        for (const auto &os: additionalStreams) {
+            std::string m = constructMessage(t, function, getTypeName(type), ADDITIONAL_FORMAT);
+            os->write(m.c_str(), (long) m.length());
+            os->flush();
+        }
+    }
+
+    nbLog++;
 }
 
-void Logger::writeToFile(const std::string &message, LoggerType type) {
+std::string Logger::constructMessage(const std::string &message, const std::string &trace, const std::string &logType,
+                                     const std::string &format) {
+    std::string res;
+
+    int i = 0;
+    while (i < format.length()) {
+        char c = format[i];
+        if (c == '%') {
+            i++;
+            c = format[i];
+
+            struct timespec now{};
+            clock_gettime(CLOCK_REALTIME, &now);
+            struct tm *t = localtime(&now.tv_sec);
+            switch (c) {
+                case 'Y':
+                    res += std::to_string(t->tm_year + 1900);
+                    break;
+                case 'M':
+                    res += std::to_string(t->tm_mon + 1);
+                    break;
+                case 'D':
+                    res += std::to_string(t->tm_mday);
+                    break;
+                case 'H':
+                    res += std::to_string(t->tm_hour);
+                    break;
+                case 'm':
+                    res += std::to_string(t->tm_min);
+                    break;
+                case 'S':
+                    res += std::to_string(t->tm_sec);
+                    break;
+                case 'N':
+                    res += std::to_string(now.tv_nsec);
+                    break;
+                case 'd':
+                    res += getDate();
+                    break;
+                case 'h':
+                    res += getHour();
+                    break;
+                case 'T':
+                    res += trace;
+                    break;
+                case 'C':
+                    res += message;
+                    break;
+                case 'n':
+                    res += std::to_string(nbLog);
+                    break;
+                case 't':
+                    res += logType;
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            res += c;
+        }
+
+        i++;
+    }
+
+    return res;
+}
+
+void Logger::writeToFile(const std::string &message) {
     if (file.is_open()) {
-        std::string toPrint =
-                "[" + std::to_string(nbWrite) + "-" + getHour() + "-" + getTypeName(type) + "]\t" + message;
-        file << toPrint;
+        file << message;
         file.flush();
-        nbWrite++;
     } else
         ERROR_LOG(CONSOLE_ONLY, "Please init logger\n");
 }
