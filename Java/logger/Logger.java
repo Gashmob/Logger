@@ -118,7 +118,7 @@ public abstract class Logger {
      * @param showTypes LoggerType
      */
     public static void init(LoggerOption verbose, LoggerType[] showTypes) {
-        if (isInitialized) {
+        if (!isInitialized) {
             Logger.verbose = verbose;
             Logger.showTypes = new ArrayList<>(Arrays.asList(showTypes));
             additionalStreams = new ArrayList<>();
@@ -141,6 +141,7 @@ public abstract class Logger {
             }
 
             if (ok) {
+                isInitialized = true;
                 info("Log start", FILE_ONLY);
 
                 if (dirCreated) {
@@ -384,10 +385,14 @@ public abstract class Logger {
      * Quit the log and close the writer
      */
     public static void exit() {
-        if (printWriter != null) {
+        if (isInitialized) {
             info("End log", FILE_ONLY);
-            printWriter.close();
-            printWriter = null;
+            isInitialized = false;
+
+            if (printWriter != null) {
+                printWriter.close();
+                printWriter = null;
+            }
         } else {
             error("Please init before exit", CONSOLE_ONLY);
         }
