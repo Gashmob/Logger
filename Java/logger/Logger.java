@@ -73,6 +73,10 @@ public abstract class Logger {
     // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
     /**
+     * If the logger is initialized
+     */
+    private static boolean isInitialized = false;
+    /**
      * The writer for the file
      */
     private static PrintWriter printWriter = null;
@@ -114,35 +118,36 @@ public abstract class Logger {
      * @param showTypes LoggerType
      */
     public static void init(LoggerOption verbose, LoggerType[] showTypes) {
-        if (printWriter == null) {
+        if (isInitialized) {
             Logger.verbose = verbose;
             Logger.showTypes = new ArrayList<>(Arrays.asList(showTypes));
             additionalStreams = new ArrayList<>();
 
-            boolean ok;
+            boolean ok = true;
             boolean dirCreated = false;
-            BufferedWriter bufferedWriter = null;
 
-            try {
-                dirCreated = new File(logPath).mkdir();
-                FileWriter fileWriter = new FileWriter(logPath + "/" + projectName + "_log_" + getDate() + ".log");
-                bufferedWriter = new BufferedWriter(fileWriter);
-                ok = true;
-            } catch (IOException e) {
-                error(e, CONSOLE_ONLY);
-                ok = false;
+            if (verbose != CONSOLE_ONLY) {
+                BufferedWriter bufferedWriter;
+
+                try {
+                    dirCreated = new File(logPath).mkdir();
+                    FileWriter fileWriter = new FileWriter(logPath + "/" + projectName + "_log_" + getDate() + ".log");
+                    bufferedWriter = new BufferedWriter(fileWriter);
+                    printWriter = new PrintWriter(bufferedWriter);
+                } catch (IOException e) {
+                    error(e, CONSOLE_ONLY);
+                    ok = false;
+                }
             }
 
             if (ok) {
-                printWriter = new PrintWriter(bufferedWriter);
-
                 info("Log start", FILE_ONLY);
 
                 if (dirCreated) {
                     warning("Log directory created");
                 }
             } else {
-                error("Log error");
+                error("Log error", CONSOLE_ONLY);
             }
         } else {
             warning("Log already init");
