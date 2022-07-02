@@ -113,6 +113,10 @@ bool showTypesContains(LoggerType type);
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
 /**
+ * If the logger is initialized
+ */
+bool isInitialized = false;
+/**
  * The log file
  */
 FILE *file = NULL;
@@ -228,7 +232,7 @@ char *getTypeName(LoggerType type) {
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
 void logger_init(LoggerOption verboseP, const LoggerType showTypesP[5]) {
-    if (!fileOpen) {
+    if (!isInitialized) {
         additionalStreams = calloc(MAX_ADDITIONAL_STREAM, sizeof(FILE));
         verbose = verboseP;
         for (int i = 0; i < 5; ++i) {
@@ -237,25 +241,28 @@ void logger_init(LoggerOption verboseP, const LoggerType showTypesP[5]) {
 
         bool dirCreated = false;
 
-        if (mkdir(LOG_PATH, S_IRWXU) == 0) {
-            dirCreated = true;
-        }
+        if (verboseP != CONSOLE_ONLY) {
+            if (mkdir(LOG_PATH, S_IRWXU) == 0) {
+                dirCreated = true;
+            }
 
-        char fileName[100];
-        sprintf(fileName, "%s/%s_log_%s.log", LOG_PATH, PROJECT_NAME, getDate());
-        errno = -1;
-        file = fopen(fileName, "w");
-        if (errno != -1) {
-            ERROR_LOG(CONSOLE_ONLY, "Error log file open : %d\n", errno);
-            exit(EXIT_FAILURE);
+            char fileName[100];
+            sprintf(fileName, "%s/%s_log_%s.log", LOG_PATH, PROJECT_NAME, getDate());
+            errno = -1;
+            file = fopen(fileName, "w");
+            if (errno != -1) {
+                ERROR_LOG(CONSOLE_ONLY, "Error log file open : %d\n", errno);
+                exit(EXIT_FAILURE);
+            }
+            fileOpen = true;
         }
-        fileOpen = true;
 
         if (pthread_mutex_init(&mutex, NULL) != 0) {
             ERROR_LOG(CONSOLE_ONLY, "Error mutex : %d\n", errno);
         }
 
         INFO_LOG(FILE_ONLY, "Log start\n");
+        isInitialized = true;
         if (dirCreated)
             WARNING_LOG(FILE_AND_CONSOLE, "Log directory created\n");
     } else
@@ -263,11 +270,14 @@ void logger_init(LoggerOption verboseP, const LoggerType showTypesP[5]) {
 }
 
 void logger_exit() {
-    if (fileOpen) {
+    if (isInitialized) {
         INFO_LOG(FILE_ONLY, "End log\n");
-        fclose(file);
-        file = NULL;
-        fileOpen = false;
+        isInitialized = false;
+        if (fileOpen) {
+            fclose(file);
+            file = NULL;
+            fileOpen = false;
+        }
 
         pthread_mutex_destroy(&mutex);
     } else
@@ -428,7 +438,7 @@ void writeToFile(char *message) {
     if (fileOpen) {
         fwrite(message, sizeof(char), strlen(message), file);
         fflush(file);
-    } else
+    } else if (!isInitialized)
         ERROR_LOG(CONSOLE_ONLY, "Please init logger\n");
 }
 
