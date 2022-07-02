@@ -151,7 +151,7 @@ public:
      * Initialisation
      */
     static void init(LoggerOption verboseP = FILE_AND_CONSOLE,
-                     const std::vector<LoggerType> &showTypesP = {INFO, SUCCESS, ERROR, WARNING, DEBUG});
+                     const std::vector <LoggerType> &showTypesP = {INFO, SUCCESS, ERROR, WARNING, DEBUG});
 
     /**
      * Quit the log and close the writer
@@ -284,6 +284,10 @@ private:
 
 private:
     /**
+     * If the logger is initialized
+     */
+    static bool isInitialized;
+    /**
      * The log file
      */
     static std::ofstream file;
@@ -306,7 +310,7 @@ private:
     /**
      * The types of logs that be shown
      */
-    static std::vector<LoggerType> showTypes;
+    static std::vector <LoggerType> showTypes;
 
 private: // Disallow to instance this class
     Logger() = default;
