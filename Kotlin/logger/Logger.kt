@@ -71,6 +71,10 @@ internal const val additional_format = "[%n-%t]\t[%T]\t%C"
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
 /**
+ * If the logger is initialized
+ */
+internal var isInitialized = false
+/**
  * The writer for the file
  */
 internal var printWriter: PrintWriter? = null
@@ -104,33 +108,37 @@ fun init(
     verboseP: LoggerOption = FILE_AND_CONSOLE,
     showTypesP: ArrayList<LoggerType> = arrayListOf(INFO, SUCCESS, ERROR, WARNING, DEBUG)
 ) {
-    if (printWriter == null) {
+    if (!isInitialized) {
         verbose = verboseP
         showTypes = showTypesP
 
+        var ok = true
         var dirCreated = false
-        var bufferedWriter: BufferedWriter? = null
 
-        val ok = try {
-            dirCreated = File(logPath).mkdir()
-            val fileWriter = FileWriter(logPath + "/" + projectName + "_log_" + getDate() + ".log")
-            bufferedWriter = BufferedWriter(fileWriter)
+        if (verboseP != CONSOLE_ONLY) {
+            var bufferedWriter: BufferedWriter? = null
 
-            true
-        } catch (e: IOException) {
-            error(e, CONSOLE_ONLY)
-            false
+            ok = try {
+                dirCreated = File(logPath).mkdir()
+                val fileWriter = FileWriter(logPath + "/" + projectName + "_log_" + getDate() + ".log")
+                bufferedWriter = BufferedWriter(fileWriter)
+                printWriter = PrintWriter(bufferedWriter)
+
+                true
+            } catch (e: IOException) {
+                error(e, CONSOLE_ONLY)
+                false
+            }
         }
 
         if (ok) {
-            printWriter = PrintWriter(bufferedWriter)
-
+            isInitialized = true
             info("Log start", FILE_ONLY)
 
             if (dirCreated)
                 warning("Log directory created")
         } else
-            error("Log error")
+            error("Log error", CONSOLE_ONLY)
     } else
         warning("Log already init")
 }
@@ -139,10 +147,14 @@ fun init(
  * Quit the log and close the file
  */
 fun exit() {
-    if (printWriter != null) {
+    if (isInitialized) {
         info("End log", FILE_ONLY)
-        printWriter!!.close()
-        printWriter = null
+        isInitialized = false
+
+        if (printWriter != null) {
+            printWriter!!.close()
+            printWriter = null
+        }
     } else
         error("Please init before exit", CONSOLE_ONLY)
 }
@@ -305,7 +317,7 @@ internal fun writeToFile(message: String) {
     if (printWriter != null) {
         printWriter!!.println(message)
         printWriter!!.flush()
-    } else
+    } else if (!isInitialized)
         error("Please init Logger", CONSOLE_ONLY)
 }
 
