@@ -340,7 +340,7 @@ public abstract class Logger {
         if (printWriter != null) {
             printWriter.println(message);
             printWriter.flush();
-        } else {
+        } else if (!isInitialized) {
             error("Please init Logger", CONSOLE_ONLY);
         }
     }
