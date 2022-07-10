@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 	"time"
 )
 
@@ -193,7 +194,9 @@ func genericLog(args []interface{}, logType LoggerType) {
 	}
 
 	// TODO : get stack trace
-	var trace = ""
+	pc, _, line, _ := runtime.Caller(2)
+	funcName := runtime.FuncForPC(pc).Name()
+	var trace = fmt.Sprintf("%s:%d", funcName, line)
 
 	if !contains(options, FILE_ONLY) && verbose != FILE_ONLY && contains(showTypes, logType) {
 		fmt.Println(logType.color.String() + constructMessage(message, trace, logType, consoleFormat) + DEFAULT.String())
@@ -204,7 +207,7 @@ func genericLog(args []interface{}, logType LoggerType) {
 	if !contains(options, FILE_ONLY) && !contains(options, CONSOLE_ONLY) && verbose == FILE_AND_CONSOLE {
 		for e := additionalOutputs.Front(); e != nil; e = e.Next() {
 			var add = e.Value.(io.Writer)
-			_, err := add.Write([]byte(constructMessage(message, trace, logType, additionalFormat)))
+			_, err := add.Write([]byte(constructMessage(message, trace, logType, additionalFormat) + "\n"))
 			if err != nil {
 				Error(e, CONSOLE_ONLY)
 			}
