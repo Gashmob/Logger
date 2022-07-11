@@ -20,7 +20,7 @@ import (
  * Write 'Is it simple ? YES' (without the quote) in the console and the file
  *
  * Complex usage :
- * logger.Info("Not too complex ?", "Maybe", LoggerOption.CONSOLE_ONLY)
+ * logger.Info("Not too complex ?", "Maybe", logger.CONSOLE_ONLY)
  * Write 'Not too complex ? Maybe' (without the quote) only in the console
  */
 
