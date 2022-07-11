@@ -3,7 +3,6 @@ package test;
 import logger.Logger;
 
 import java.io.*;
-import java.util.Objects;
 
 /**
  * Test basique 1 :
@@ -70,15 +69,6 @@ public class BasicTest1 extends Test {
     public void after() {
         // Rm logs directory
         File logsDir = new File("logs");
-        clearDir(logsDir);
-    }
-
-    private void clearDir(File dir) {
-        if (dir.isDirectory()) {
-            for (File f : Objects.requireNonNull(dir.listFiles())) {
-                clearDir(f);
-            }
-        }
-        dir.delete();
+        Utils.clearDir(logsDir);
     }
 }

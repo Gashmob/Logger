@@ -9,6 +9,7 @@ public class Main {
         // Prepare tests
         ArrayList<Test> tests = new ArrayList<>();
         tests.add(new BasicTest1());
+        tests.add(new ThreadTest1());
 
         // ====================
 
