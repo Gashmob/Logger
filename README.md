@@ -6,6 +6,10 @@ Avec l'aide de [Rominos111](https://github.com/Rominos111) pour la version origi
 
 ---
 
+[![Java test](https://github.com/Gashmob/Logger/actions/workflows/java.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/java.yml)
+
+---
+
 Utilisation :
 
 Chaque dossier de langages contient un dossier `logger`, il vous suffit juste de copier/coller ce dossier dans les sources de votre projet.
