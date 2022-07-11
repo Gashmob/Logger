@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"runtime"
+	"sync"
 	"time"
 )
 
@@ -193,7 +194,6 @@ func genericLog(args []interface{}, logType LoggerType) {
 		}
 	}
 
-	// TODO : get stack trace
 	pc, _, line, _ := runtime.Caller(2)
 	funcName := runtime.FuncForPC(pc).Name()
 	var trace = fmt.Sprintf("%s:%d", funcName, line)
@@ -288,8 +288,12 @@ func Debug(args ...interface{}) {
 
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
+var mutex sync.Mutex = sync.Mutex{}
+
 func writeToFile(message string) {
 	if file != nil {
+		mutex.Lock()
+		defer mutex.Unlock()
 		_, err := file.WriteString(message + "\n")
 		if err != nil {
 			return
