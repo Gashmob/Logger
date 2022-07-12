@@ -10,6 +10,7 @@ public class Main {
         ArrayList<Test> tests = new ArrayList<>();
         tests.add(new BasicTest1());
         tests.add(new ThreadTest1());
+        tests.add(new ThreadTest2());
 
         // ====================
 
@@ -44,7 +45,7 @@ public class Main {
         // ====================
 
         // Print summary
-        System.out.println("\n\n" + passed + " tests passed out of " + tests.size() + ".");
+        System.out.println("\n" + passed + " tests passed out of " + tests.size() + ".");
         if (passed == tests.size()) {
             System.out.println("\u001B[30;42m ALL TESTS PASSED \u001B[00m");
         } else {
