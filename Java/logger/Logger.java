@@ -31,12 +31,12 @@ public abstract class Logger {
      * The log directory's path
      * Change it with your path
      */
-    private final static String logPath = "./logs";
+    public static String logPath = "./logs";
     /**
      * Project's name
      * Change it with your project's name
      */
-    private final static String projectName = "project";
+    public static String projectName = "project";
 
     // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
@@ -60,15 +60,15 @@ public abstract class Logger {
     /**
      * Format for console log
      */
-    private final static String console_format = "[%T]\t%C";
+    public static String console_format = "[%T]\t%C";
     /**
      * Format for log file
      */
-    private final static String file_format = "[%n-%h-%t]\t[%T]\t%C";
+    public static String file_format = "[%n-%h-%t]\t[%T]\t%C";
     /**
      * Format for additional output streams
      */
-    private final static String additional_format = "[%n-%t]\t[%T]\t%C";
+    public static String additional_format = "[%n-%t]\t[%T]\t%C";
 
     // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
