@@ -26,13 +26,13 @@ import java.time.LocalDateTime
  * The log directory's path
  * Change it with your path
  */
-internal const val logPath = "./logs"
+var logPath = "./logs"
 
 /**
  * Project's name
  * Change it with your project's name
  */
-internal const val projectName = "project"
+var projectName = "project"
 
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
@@ -56,17 +56,17 @@ internal const val projectName = "project"
 /**
  * Format for console log
  */
-internal const val console_format = "[%T]\t%C"
+var console_format = "[%T]\t%C"
 
 /**
  * Format for log file
  */
-internal const val file_format = "[%n-%h-%t]\t[%T]\t%C"
+var file_format = "[%n-%h-%t]\t[%T]\t%C"
 
 /**
  * Format for additional output streams
  */
-internal const val additional_format = "[%n-%t]\t[%T]\t%C"
+var additional_format = "[%n-%t]\t[%T]\t%C"
 
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
