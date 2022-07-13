@@ -28,13 +28,13 @@ import (
  * The log directory's path
  * Change it with your path
  */
-const logPath = "./logs"
+const LogPath = "./logs"
 
 /**
  * Project's name
  * Change it with your project's name
  */
-const projectName = "project"
+const ProjectName = "project"
 
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
@@ -58,17 +58,17 @@ const projectName = "project"
 /**
  * Format for console log
  */
-const consoleFormat = "[%T]\t%C"
+const ConsoleFormat = "[%T]\t%C"
 
 /**
  * Format for log file
  */
-const fileFormat = "[%n-%h-%t]\t[%T]\t%C"
+const FileFormat = "[%n-%h-%t]\t[%T]\t%C"
 
 /**
  * Format for additional output streams
  */
-const additionalFormat = "[%n-%t]\t[%T]\t%C"
+const AdditionalFormat = "[%n-%t]\t[%T]\t%C"
 
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
@@ -116,7 +116,7 @@ func Init(verboseP LoggerOption, showTypesP []LoggerType) {
 		var dirCreated = false
 
 		if verboseP != CONSOLE_ONLY {
-			err := os.Mkdir(logPath, os.ModePerm)
+			err := os.Mkdir(LogPath, os.ModePerm)
 			if err != nil {
 				if !os.IsExist(err) {
 					ok = false
@@ -125,7 +125,7 @@ func Init(verboseP LoggerOption, showTypesP []LoggerType) {
 				dirCreated = true
 			}
 
-			file, err = os.Create(logPath + "/" + projectName + "_log_" + getDate() + ".log")
+			file, err = os.Create(LogPath + "/" + ProjectName + "_log_" + getDate() + ".log")
 			if err != nil {
 				ok = false
 			}
@@ -199,15 +199,15 @@ func genericLog(args []interface{}, logType LoggerType) {
 	var trace = fmt.Sprintf("%s:%d", funcName, line)
 
 	if !contains(options, FILE_ONLY) && verbose != FILE_ONLY && contains(showTypes, logType) {
-		fmt.Println(logType.color.String() + constructMessage(message, trace, logType, consoleFormat) + DEFAULT.String())
+		fmt.Println(logType.color.String() + constructMessage(message, trace, logType, ConsoleFormat) + DEFAULT.String())
 	}
 	if !contains(options, CONSOLE_ONLY) && verbose != CONSOLE_ONLY {
-		writeToFile(constructMessage(message, trace, logType, fileFormat))
+		writeToFile(constructMessage(message, trace, logType, FileFormat))
 	}
 	if !contains(options, FILE_ONLY) && !contains(options, CONSOLE_ONLY) && verbose == FILE_AND_CONSOLE {
 		for e := additionalOutputs.Front(); e != nil; e = e.Next() {
 			var add = e.Value.(io.Writer)
-			_, err := add.Write([]byte(constructMessage(message, trace, logType, additionalFormat) + "\n"))
+			_, err := add.Write([]byte(constructMessage(message, trace, logType, AdditionalFormat) + "\n"))
 			if err != nil {
 				Error(e, CONSOLE_ONLY)
 			}
