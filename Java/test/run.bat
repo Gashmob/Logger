@@ -1,5 +1,5 @@
 :: Compile tests
-javac .\logger
+javac logger
 ::javac -cp .\logger .\test\*.java
 
 :: Run tests
