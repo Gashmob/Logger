@@ -1,5 +1,6 @@
 :: Compile tests
-javac -cp .\logger .\test\*.java
+javac .\logger
+javac -cp .\logger: .\test\*.java
 
 :: Run tests
-java -cp .\logger test.Main
+java -cp .\logger: test.Main
