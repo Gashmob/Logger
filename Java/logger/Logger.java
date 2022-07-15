@@ -260,19 +260,45 @@ public abstract class Logger {
 
                 LocalDateTime now = LocalDateTime.now();
                 switch (c) {
-                    case 'Y' -> res.append(now.getYear());
-                    case 'M' -> res.append(String.format("%02d", now.getMonthValue()));
-                    case 'D' -> res.append(String.format("%02d", now.getDayOfMonth()));
-                    case 'H' -> res.append(String.format("%02d", now.getHour()));
-                    case 'm' -> res.append(String.format("%02d", now.getMinute()));
-                    case 'S' -> res.append(String.format("%02d", now.getSecond()));
-                    case 'N' -> res.append(String.format("%03d", now.getNano() / 1000));
-                    case 'd' -> res.append(getDate());
-                    case 'h' -> res.append(getHour());
-                    case 'T' -> res.append(trace);
-                    case 'C' -> res.append(message);
-                    case 'n' -> res.append(nbLog);
-                    case 't' -> res.append(logType);
+                    case 'Y':
+                        res.append(now.getYear());
+                        break;
+                    case 'M':
+                        res.append(String.format("%02d", now.getMonthValue()));
+                        break;
+                    case 'D':
+                        res.append(String.format("%02d", now.getDayOfMonth()));
+                        break;
+                    case 'H':
+                        res.append(String.format("%02d", now.getHour()));
+                        break;
+                    case 'm':
+                        res.append(String.format("%02d", now.getMinute()));
+                        break;
+                    case 'S':
+                        res.append(String.format("%02d", now.getSecond()));
+                        break;
+                    case 'N':
+                        res.append(String.format("%03d", now.getNano() / 1000));
+                        break;
+                    case 'd':
+                        res.append(getDate());
+                        break;
+                    case 'h':
+                        res.append(getHour());
+                        break;
+                    case 'T':
+                        res.append(trace);
+                        break;
+                    case 'C':
+                        res.append(message);
+                        break;
+                    case 'n':
+                        res.append(nbLog);
+                        break;
+                    case 't':
+                        res.append(logType);
+                        break;
                 }
             } else {
                 res.append(c);
