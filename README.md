@@ -2,7 +2,7 @@
 
 Un simple système de logger dans plusieurs langages. Chaque version utilise le même concept.
 
-Avec l'aide de [RominosTHD](https://github.com/RomainTHD) pour la version originale en Java, et l'aide de [Hunter Vaners](https://github.com/huntervaners) pour la version Python.
+Avec l'aide de [RominosTHD](https://github.com/RomainTHD) pour la version originale en Java, et l'aide de [ArthurBajt](https://github.com/ArthurBajt) pour la version Python.
 
 ---
 
