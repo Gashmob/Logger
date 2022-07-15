@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Compile tests
+javac ./logger/*.java
 javac -cp ./logger: ./test/*.java
 
 # Run tests
