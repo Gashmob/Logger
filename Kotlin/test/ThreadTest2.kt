@@ -5,23 +5,19 @@ import java.io.IOException
 
 
 class ThreadTest2 : Test("ThreadTest2") {
-    private var waiting = true
-
     override fun run(): Boolean {
         logger.init()
 
         val t1 = Thread {
-            while (waiting);
+            Thread.sleep(1000)
             logger.info("test")
         }
         val t2 = Thread {
-            while (waiting);
+            Thread.sleep(1000)
             logger.debug("test")
         }
         t1.start()
         t2.start()
-
-        waiting = false
 
         try {
             t1.join()
