@@ -11,8 +11,6 @@ Les tests sont les mêmes pour chaque version, ils sont effectués sur ubuntu, w
 [![Java test](https://github.com/Gashmob/Logger/actions/workflows/java.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/java.yml)
 [![Kotlin test](https://github.com/Gashmob/Logger/actions/workflows/kotlin.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/kotlin.yml)
 
----
-
 ## Utilisation
 
 ### Java & Kotlin
