@@ -40,7 +40,7 @@ jobs:
         uses: fwilhe2/setup-kotlin@main
 
       - name: Run test
-        run: .\test\run.bat
+        run: .\test\run.ps1
 
   test-macos:
     runs-on: macos-latest
