@@ -7,6 +7,7 @@ Avec l'aide de [RominosTHD](https://github.com/RomainTHD) pour la version origin
 ---
 
 [![Java test](https://github.com/Gashmob/Logger/actions/workflows/java.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/java.yml)
+[![Kotlin test](https://github.com/Gashmob/Logger/actions/workflows/kotlin.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/kotlin.yml)
 
 ---
 
