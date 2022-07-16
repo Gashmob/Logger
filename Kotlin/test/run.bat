@@ -1,5 +1,5 @@
 :: Compile tests
-kotlinc .\test\*.kt -include-runtime
+kotlinc .\test\*.kt
 
 :: Run tests
 ::kotlin -cp Logger_Kotlin.jar; MainKt
