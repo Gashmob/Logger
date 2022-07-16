@@ -4,8 +4,6 @@ Un simple système de logger dans plusieurs langages. Chaque version utilise le 
 
 Avec l'aide de [RominosTHD](https://github.com/RomainTHD) pour la version originale en Java, et l'aide de [ArthurBajt](https://github.com/ArthurBajt) pour la version Python.
 
----
-
 ## Tests
 
 Les tests sont les mêmes pour chaque version, ils sont effectués sur ubuntu, windows et macos.
