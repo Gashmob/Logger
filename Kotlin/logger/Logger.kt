@@ -116,7 +116,7 @@ fun init(
         var dirCreated = false
 
         if (verboseP != CONSOLE_ONLY) {
-            var bufferedWriter: BufferedWriter? = null
+            var bufferedWriter: BufferedWriter?
 
             ok = try {
                 dirCreated = File(logPath).mkdir()
