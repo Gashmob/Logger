@@ -1,5 +1,5 @@
 :: Compile tests
-dir
+dir test
 ::kotlinc -cp Logger_Kotlin.jar; .\test\*.kt -include-runtime
 
 :: Run tests
