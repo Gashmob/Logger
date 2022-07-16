@@ -25,24 +25,28 @@ public class ThreadTest2 extends Test {
         name = "ThreadTest2";
     }
 
-    private static boolean waiting = true;
-
     @Override
     public boolean run() {
         Logger.init();
 
         Thread t1 = new Thread(() -> {
-            while (waiting) ;
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             Logger.info("test");
         });
         Thread t2 = new Thread(() -> {
-            while (waiting) ;
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             Logger.debug("test");
         });
         t1.start();
         t2.start();
-
-        waiting = false;
 
         try {
             t1.join();
