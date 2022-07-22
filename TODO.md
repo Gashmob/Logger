@@ -1,0 +1,27 @@
+# TODO
+
+- Tests
+  - Java
+    - [x] Ubuntu
+    - [x] Windows
+    - [x] MacOS
+  - Kotlin
+    - [x] Ubuntu
+    - [ ] Windows
+    - [x] MacOS
+  - Python
+    - [ ] Ubuntu
+    - [ ] Windows
+    - [ ] MacOS
+  - C
+    - [ ] Ubuntu
+    - [ ] Windows
+    - [ ] MacOS
+  - C++
+    - [ ] Ubuntu
+    - [ ] Windows
+    - [ ] MacOS
+  - Go
+    - [ ] Ubuntu
+    - [ ] Windows
+    - [ ] MacOS
