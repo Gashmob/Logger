@@ -26,21 +26,21 @@ jobs:
       - name: Run test
         run: ./test/run.sh
 
-  # test-windows:
-  #   runs-on: windows-latest
-  #   defaults:
-  #     run:
-  #       working-directory: Kotlin
-  #   steps:
-  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
+  test-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: Kotlin
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  #     - name: Setup Kotlin
-  #       uses: fwilhe2/setup-kotlin@main
+      - name: Setup Kotlin
+        uses: fwilhe2/setup-kotlin@main
 
-  #     - name: Run test
-  #       run: .\test\run.ps1
+      - name: Run test
+        run: .\test\run.ps1
 
   test-macos:
     runs-on: macos-latest
