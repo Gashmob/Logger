@@ -40,7 +40,9 @@ jobs:
         uses: fwilhe2/setup-kotlin@main
 
       - name: Run test
-        run: kotlinc -cp Logger_Kotlin.jar test\Test.kt
+        run: |
+          kotlinc -cp Logger_Kotlin.jar test\Test.kt
+          dir
 
   test-macos:
     runs-on: macos-latest
