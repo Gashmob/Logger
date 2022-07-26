@@ -42,6 +42,11 @@ jobs:
       - name: Run test
         run: |
           kotlinc -cp Logger_Kotlin.jar test\Test.kt
+          kotlinc -cp Logger_Kotlin.jar test\utils.kt
+          kotlinc -cp Logger_Kotlin.jar;. test\BasicTest1.kt
+          kotlinc -cp Logger_Kotlin.jar;. test\ThreadTest1.kt
+          kotlinc -cp Logger_Kotlin.jar;. test\ThreadTest2.kt
+          kotlinc -cp Logger_Kotlin.jar;. test\main.kt -include-runtime
           dir
 
   test-macos:
