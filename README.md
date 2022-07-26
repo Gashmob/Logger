@@ -20,6 +20,9 @@ Les tests sont les mêmes pour chaque version, ils sont effectués sur ubuntu, w
 | C       |:grey_question:   |:grey_question:   |:grey_question:   |
 | Go      |:grey_question:   |:grey_question:   |:grey_question:   |
 
+**Notes :**
+
+Le test Windows pour Kotlin ne fonctionne pas : `kotlinc` n'arrive pas à compiler les sources dans le script batch (si vous avez une idée de comment fixer ça, n'hésitez pas à proposer une pull request, ou répondre à l'issue [#2](https://github.com/Gashmob/Logger/issues/2))
 
 ## Utilisation
 
