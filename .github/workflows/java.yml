@@ -49,8 +49,11 @@ jobs:
 
       - name: Run test
         run: |
-          javac -cp Logger_Java.jar .\test\*.java
-          java -cp "Logger_Java.jar:." test.Main
+          javac .\logger\*.java .\logger\**\*.java
+          javac -cp .\logger .\test\*.java
+          java -cp .\logger test.Main
+#          javac -cp Logger_Java.jar .\test\*.java
+#          java -cp "Logger_Java.jar:." test.Main
 
   test-macos:
     runs-on: macos-latest
