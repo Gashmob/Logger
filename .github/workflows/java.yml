@@ -50,7 +50,7 @@ jobs:
       - name: Run test
         run: |
           javac -cp Logger_Java.jar .\test\*.java
-          java -cp Logger_Java.jar:. test.Main
+          java test.Main
 
   test-macos:
     runs-on: macos-latest
