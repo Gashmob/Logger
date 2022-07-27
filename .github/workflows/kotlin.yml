@@ -24,7 +24,9 @@ jobs:
         uses: fwilhe2/setup-kotlin@main
 
       - name: Run test
-        run: ./test/run.sh
+        run: |
+          kotlinc -cp Logger_Kotlin.jar ./test/*.kt -include-runtime
+          kotlin -cp ./Logger_Kotlin.jar:. MainKt
 
   # test-windows:
   #   runs-on: windows-latest
@@ -56,4 +58,6 @@ jobs:
         uses: fwilhe2/setup-kotlin@main
 
       - name: Run test
-        run: ./test/run.sh
+        run: |
+          kotlinc -cp Logger_Kotlin.jar ./test/*.kt -include-runtime
+          kotlin -cp ./Logger_Kotlin.jar:. MainKt
