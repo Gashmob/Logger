@@ -48,7 +48,9 @@ jobs:
           java-version: "11"
 
       - name: Run test
-        run: .\test\run.bat
+        run: |
+          javac -cp Logger_Java.jar: .\test\*.java
+          java -cp Logger_Java.jar: test.Main
 
   test-macos:
     runs-on: macos-latest
