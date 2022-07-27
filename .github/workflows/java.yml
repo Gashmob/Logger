@@ -49,7 +49,7 @@ jobs:
 
       - name: Run test
         run: |
-          javac .\logger\*.java .\logger\**\*.java
+          javac .\logger\*.java .\logger\enums\*.java
           javac -cp .\logger .\test\*.java
           java -cp .\logger test.Main
 #          javac -cp Logger_Java.jar .\test\*.java
