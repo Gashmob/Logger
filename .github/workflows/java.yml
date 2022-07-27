@@ -48,12 +48,7 @@ jobs:
           java-version: "11"
 
       - name: Run test
-        run: |
-          javac .\logger\*.java .\logger\enums\*.java
-          javac -cp .\logger .\test\*.java
-          java -cp .\logger test.Main
-#          javac -cp Logger_Java.jar .\test\*.java
-#          java -cp "Logger_Java.jar:." test.Main
+        run: .\test\run.bat
 
   test-macos:
     runs-on: macos-latest
