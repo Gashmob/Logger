@@ -49,7 +49,7 @@ jobs:
 
       - name: Run test
         run: |
-          javac -cp Logger_Java.jar; .\test\*.java
+          javac -cp Logger_Java.jar; .\\test\\*.java
           java -cp Logger_Java.jar; test.Main
 
   test-macos:
