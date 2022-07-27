@@ -27,7 +27,9 @@ jobs:
           java-version: "11"
 
       - name: Run test
-        run: ./test/run.sh
+        run: |
+          javac -cp Logger_Java.jar: ./test/*.java
+          java -cp Logger_Java.jar: test.Main
 
   test-windows:
     runs-on: windows-latest
@@ -46,7 +48,9 @@ jobs:
           java-version: "17"
 
       - name: Run test
-        run: .\test\run.bat
+        run: |
+          javac -cp Logger_Java.jar; .\test\*.java
+          java -cp Logger_Java.jar; test.Main
 
   test-macos:
     runs-on: macos-latest
@@ -65,4 +69,6 @@ jobs:
           java-version: "11"
 
       - name: Run test
-        run: ./test/run.sh
+        run: |
+          javac -cp Logger_Java.jar: ./test/*.java
+          java -cp Logger_Java.jar: test.Main
