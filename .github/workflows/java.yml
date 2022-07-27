@@ -48,7 +48,7 @@ jobs:
           java-version: "17"
 
       - name: Run test
-        run: run.bat
+        run: .\test\run.bat
 
   test-macos:
     runs-on: macos-latest
