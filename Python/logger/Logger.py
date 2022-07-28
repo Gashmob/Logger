@@ -136,6 +136,7 @@ class Logger:
         """Quit the log and close the file"""
         if cls.__isInitialized:
             cls.info("End log", LoggerOption.FILE_ONLY)
+            cls.__isInitialized = False
 
             if cls.__file is not None:
                 cls.__file.close()
