@@ -13,7 +13,7 @@ import java.util.concurrent.Semaphore;
  * Initialise le logger, lance 2 threads qui utilisent le logger et exit le logger après avoir join les threads.
  * Le thread 1 log en info
  * Le thread 2 log en debug
- * Les 2 threads attendent qu'une variable soit à false pour logger
+ * Les 2 threads attendent que le sémaphore soit libéré avant de log en info et debug
  * <p>
  * Conditions de réussite :
  * - Le dossier logs est créé.
