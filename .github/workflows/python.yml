@@ -1,0 +1,68 @@
+name: Python test
+
+on:
+  push:
+    paths:
+      - "Python/**"
+      - ".github/workflows/python.yml"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  test-ubuntu:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Python
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          architecture: 'x64'
+
+      - name: Run test
+        run: python test/main.py
+
+  test-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: Python
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          architecture: 'x64'
+
+      - name: Run test
+        run: python .\test\main.py
+
+  test-macos:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: Python
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          architecture: 'x64'
+
+      - name: Run test
+        run: python test/main.py
