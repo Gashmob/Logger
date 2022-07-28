@@ -2,22 +2,27 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 import java.io.IOException
+import java.util.concurrent.Semaphore
 
 
 class ThreadTest2 : Test("ThreadTest2") {
+    private var semaphore = Semaphore(0)
+
     override fun run(): Boolean {
         logger.init()
 
         val t1 = Thread {
-            Thread.sleep(1000)
+            semaphore.acquire()
             logger.info("test")
         }
         val t2 = Thread {
-            Thread.sleep(1000)
+            semaphore.acquire()
             logger.debug("test")
         }
         t1.start()
         t2.start()
+
+        semaphore.release(2)
 
         try {
             t1.join()
