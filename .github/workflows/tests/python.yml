@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "Python/**"
-      - ".github/workflows/python.yml"
+      - ".github/workflows/tests/python.yml"
   pull_request:
     branches:
       - "*"

@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "Java/**"
-      - ".github/workflows/java.yml"
+      - ".github/workflows/tests/java.yml"
   pull_request:
     branches:
       - "*"
