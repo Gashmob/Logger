@@ -5,6 +5,19 @@ import java.io.IOException
 import java.util.concurrent.Semaphore
 
 
+/**
+ * Test thread 2 :
+ * Initialise le logger, lance 2 threads qui utilisent le logger et exit le logger après avoir join les threads.
+ * Le thread 1 log en info
+ * Le thread 2 log en debug
+ * Les 2 threads attendent que le sémaphore soit libéré avant de log en info et debug
+ * <p>
+ * Conditions de réussite :
+ * - Le dossier logs est créé.
+ * - Il contient un seul fichier .log.
+ * - Le fichier .log contient 5 lignes de logs.
+ * - Les 3ème et 4ème lignes du fichier sont bien formées.
+ */
 class ThreadTest2 : Test("ThreadTest2") {
     private var semaphore = Semaphore(0)
 
