@@ -1,10 +1,10 @@
-name: Python test
+name: Java test
 
 on:
   push:
     paths:
-      - "Python/**"
-      - ".github/workflows/tests/python.yml"
+      - "Java/**"
+      - ".github/workflows/java.yml"
   pull_request:
     branches:
       - "*"
@@ -14,55 +14,59 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: Python
+        working-directory: Java
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - name: Setup Java 11
+        uses: actions/setup-java@v3
         with:
-          python-version: '3.x'
-          architecture: 'x64'
+          distribution: "corretto"
+          java-version: "11"
 
       - name: Run test
-        run: python test/main.py
+        run: |
+          javac -cp Logger_Java.jar: ./test/*.java
+          java -cp Logger_Java.jar: test.Main
 
   test-windows:
     runs-on: windows-latest
     defaults:
       run:
-        working-directory: Python
+        working-directory: Java
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - name: Setup Java 11
+        uses: actions/setup-java@v3
         with:
-          python-version: '3.x'
-          architecture: 'x64'
+          distribution: "corretto"
+          java-version: "11"
 
       - name: Run test
-        run: python .\test\main.py
+        run: .\test\run.bat
 
   test-macos:
     runs-on: macos-latest
     defaults:
       run:
-        working-directory: Python
+        working-directory: Java
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - name: Setup Java 11
+        uses: actions/setup-java@v3
         with:
-          python-version: '3.x'
-          architecture: 'x64'
+          distribution: "corretto"
+          java-version: "11"
 
       - name: Run test
-        run: python test/main.py
+        run: |
+          javac -cp Logger_Java.jar: ./test/*.java
+          java -cp Logger_Java.jar: test.Main

@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "Kotlin/**"
-      - ".github/workflows/tests/kotlin.yml"
+      - ".github/workflows/kotlin.yml"
   pull_request:
     branches:
       - "*"
