@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.concurrent.Semaphore;
 
 /**
  * Test thread 2 :
@@ -25,13 +26,15 @@ public class ThreadTest2 extends Test {
         name = "ThreadTest2";
     }
 
+    public Semaphore semaphore = new Semaphore(0);
+
     @Override
     public boolean run() {
         Logger.init();
 
         Thread t1 = new Thread(() -> {
             try {
-                Thread.sleep(1000);
+                semaphore.acquire();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -39,7 +42,7 @@ public class ThreadTest2 extends Test {
         });
         Thread t2 = new Thread(() -> {
             try {
-                Thread.sleep(1000);
+                semaphore.acquire();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -47,6 +50,8 @@ public class ThreadTest2 extends Test {
         });
         t1.start();
         t2.start();
+
+        semaphore.release(2);
 
         try {
             t1.join();
