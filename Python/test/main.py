@@ -7,7 +7,7 @@ from threading import Thread, Semaphore
 from time import sleep
 from pathlib import Path
 
-path_root = Path(__file__).parents[2]
+path_root = Path(__file__).parents[1]
 sys.path.append(str(path_root))
 print(sys.path)
 
