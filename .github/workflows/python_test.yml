@@ -27,7 +27,9 @@ jobs:
           architecture: 'x64'
 
       - name: Set PYTHONPATH
-        run: echo "::set-env name=PYTHONPATH::pwd"
+        run: |
+          export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$pwd"
+          echo "$LD_LIBRARY_PATH"
 
       - name: Run test
         run: python test/main.py
