@@ -27,7 +27,7 @@ jobs:
           architecture: 'x64'
 
       - name: Set PYTHONPATH
-        run: PYTHONPATH="$pwd"
+        run: echo "::set-env name=PYTHONPATH::pwd"
 
       - name: Run test
         run: python test/main.py
