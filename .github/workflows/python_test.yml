@@ -26,6 +26,9 @@ jobs:
           python-version: '3.x'
           architecture: 'x64'
 
+      - name: Set PYTHONPATH
+        run: PYTHONPATH="$pwd"
+
       - name: Run test
         run: python test/main.py
 
