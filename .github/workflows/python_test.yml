@@ -26,13 +26,11 @@ jobs:
           python-version: '3.x'
           architecture: 'x64'
 
-      - name: Set PYTHONPATH
+      - name: Run test
         run: |
           export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`
           echo $LD_LIBRARY_PATH
-
-      - name: Run test
-        run: python test/main.py
+          python test/main.py
 
   test-windows:
     runs-on: windows-latest
