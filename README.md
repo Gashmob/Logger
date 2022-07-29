@@ -12,14 +12,14 @@ Les tests sont les mêmes pour chaque version, ils sont effectués sur ubuntu, w
 [![Kotlin test](https://github.com/Gashmob/Logger/actions/workflows/kotlin_test.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/kotlin_test.yml)
 [![Python test](https://github.com/Gashmob/Logger/actions/workflows/python_test.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/python_test.yml)
 
-|         | Ubuntu           | Windows          | MacOS            |
-|:--------|:----------------:|:----------------:|:----------------:|
-| Java    |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-| Kotlin  |:heavy_check_mark:|:x:               |:heavy_check_mark:|
-| Python  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-| C++     |:grey_question:   |:grey_question:   |:grey_question:   |
-| C       |:grey_question:   |:grey_question:   |:grey_question:   |
-| Go      |:grey_question:   |:grey_question:   |:grey_question:   |
+|          | Ubuntu           | Windows          | MacOS            |
+|:---------|:----------------:|:----------------:|:----------------:|
+|**Java**  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+|**Kotlin**|:heavy_check_mark:|:x:               |:heavy_check_mark:|
+|**Python**|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
+|**C++**   |:grey_question:   |:grey_question:   |:grey_question:   |
+|**C**     |:grey_question:   |:grey_question:   |:grey_question:   |
+|**Go**    |:grey_question:   |:grey_question:   |:grey_question:   |
 
 **Notes :**
 
