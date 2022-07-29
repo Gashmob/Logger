@@ -27,7 +27,7 @@ jobs:
           architecture: 'x64'
 
       - name: Run test
-        run: python test/main.py
+        run: python -m test.main
 
   test-windows:
     runs-on: windows-latest

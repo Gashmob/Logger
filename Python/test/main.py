@@ -6,7 +6,7 @@ from abc import abstractmethod
 from threading import Thread, Semaphore
 from time import sleep
 
-from logger import Logger
+from ..logger import Logger
 
 
 # _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
