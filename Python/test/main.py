@@ -5,6 +5,11 @@ import sys
 from abc import abstractmethod
 from threading import Thread, Semaphore
 from time import sleep
+from pathlib import Path
+
+path_root = Path(__file__).parents[2]
+sys.path.append(str(path_root))
+print(sys.path)
 
 from logger import Logger
 
