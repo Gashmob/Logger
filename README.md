@@ -8,15 +8,15 @@ Avec l'aide de [RominosTHD](https://github.com/RomainTHD) pour la version origin
 
 Les tests sont les mêmes pour chaque version, ils sont effectués sur ubuntu, windows et macos.
 
-[![Java test](https://github.com/Gashmob/Logger/actions/workflows/java.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/java.yml)
-[![Kotlin test](https://github.com/Gashmob/Logger/actions/workflows/kotlin.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/kotlin.yml)
-[![Python test](https://github.com/Gashmob/Logger/actions/workflows/python.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/python.yml)
+[![Java test](https://github.com/Gashmob/Logger/actions/workflows/java_test.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/java_test.yml)
+[![Kotlin test](https://github.com/Gashmob/Logger/actions/workflows/kotlin_test.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/kotlin_test.yml)
+[![Python test](https://github.com/Gashmob/Logger/actions/workflows/python_test.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/python_test.yml)
 
 |         | Ubuntu           | Windows          | MacOS            |
 |:--------|:----------------:|:----------------:|:----------------:|
 | Java    |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 | Kotlin  |:heavy_check_mark:|:x:               |:heavy_check_mark:|
-| Python  |:x:   |:x:   |:x:   |
+| Python  |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 | C++     |:grey_question:   |:grey_question:   |:grey_question:   |
 | C       |:grey_question:   |:grey_question:   |:grey_question:   |
 | Go      |:grey_question:   |:grey_question:   |:grey_question:   |
