@@ -37,7 +37,7 @@ Test ThreadTest2 = {
             Logger::init();
 
             #ifdef __APPLE__
-            sem = *dispatch_semaphore_create(value);
+            sem = *dispatch_semaphore_create(0);
 #else
             sem_init(&sem, 0, 0);
 #endif
