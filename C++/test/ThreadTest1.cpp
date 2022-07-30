@@ -8,7 +8,7 @@
  * Initialise le logger, lance 2 threads qui utilisent le logger et exit le logger après avoir join les threads.
  * Le thread 1 log en info puis attend 1 seconde
  * Le thread 2 attend 1 seconde puis log en debug
- * <p>
+ * 
  * Conditions de réussite :
  * - Le dossier logs est créé.
  * - Il contient un seul fichier .log.

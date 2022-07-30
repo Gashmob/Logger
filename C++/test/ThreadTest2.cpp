@@ -1,11 +1,19 @@
 #include "test.h"
 #include <thread>
+#ifdef __APPLE__
+#include <dispatch/dispatch.h>
+#else
 #include <semaphore.h>
+#endif
 #include <regex>
 
 #include "../logger/Logger.hpp"
 
-static sem_t sem;
+#ifdef __APPLE__
+static dispatch_semaphore_t    sem;
+#else
+static sem_t                   sem;
+#endif
 
 /**
  * Test thread 2 :
@@ -13,12 +21,12 @@ static sem_t sem;
  * Le thread 1 log en info
  * Le thread 2 log en debug
  * Les 2 threads attendent que le sémaphore soit libéré avant de log en info et debug
- * <p>
+ * 
  * Conditions de réussite :
  * - Le dossier logs est créé.
  * - Il contient un seul fichier .log.
  * - Le fichier .log contient 5 lignes de logs.
- * - Les 3ème et 4ème lignes du fichier sont bien formées.
+//  * - Les 3ème et 4ème lignes du fichier sont bien formées.
  */
 Test ThreadTest2 = {
         "ThreadTest2",
@@ -28,24 +36,41 @@ Test ThreadTest2 = {
         []() {
             Logger::init();
 
+            #ifdef __APPLE__
+            sem = *dispatch_semaphore_create(value);
+#else
             sem_init(&sem, 0, 0);
+#endif
 
             std::thread t1([]() {
+#ifdef __APPLE__
+                dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+#else
                 sem_wait(&sem);
+#endif
                 INFO_LOG(FILE_AND_CONSOLE, "test");
             });
             std::thread t2([]() {
+#ifdef __APPLE__
+                dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+#else
                 sem_wait(&sem);
+#endif
                 DEBUG_LOG(FILE_AND_CONSOLE, "test");
             });
 
+#ifdef __APPLE__
+            dispatch_semaphore_signal(sem);
+            dispatch_semaphore_signal(sem);
+#else
             sem_post(&sem);
             sem_post(&sem);
+#endif
 
             t1.join();
             t2.join();
 
-            sem_destroy(&sem);
+            //sem_destroy(&sem);
 
             Logger::exit();
 
