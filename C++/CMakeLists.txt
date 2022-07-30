@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 include_directories(logger)
 include_directories(test)
 
-add_executable(test
+add_executable(logger_test
         logger/Logger.cpp
         logger/Logger.hpp
         test/main.cpp
@@ -16,4 +16,4 @@ add_executable(test
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
-target_link_libraries(test PRIVATE Threads::Threads)
+target_link_libraries(logger_test PRIVATE Threads::Threads)
