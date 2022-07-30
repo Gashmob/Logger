@@ -34,12 +34,12 @@
  * The log directory's path
  * Change it with your path
  */
-std::string LOG_PATH = "./logs"
+static std::string LOG_PATH = "./logs";
 /**
  * Project's name
  * Change it with your project's name
  */
-std::string PROJECT_NAME = "project"
+static std::string PROJECT_NAME = "project";
 
 /*
  * Different rules for the formats :
@@ -61,17 +61,17 @@ std::string PROJECT_NAME = "project"
 /**
  * Format for console log
  */
-std::string CONSOLE_FORMAT = "[%T]\t%C"
+static std::string CONSOLE_FORMAT = "[%T]\t%C";
 
 /**
  * Format for log file
  */
-std::string FILE_FORMAT = "[%n-%h-%t]\t[%T]\t%C"
+static std::string FILE_FORMAT = "[%n-%h-%t]\t[%T]\t%C";
 
 /**
  * Format for additional output stream
  */
-std::string ADDITIONAL_FORMAT = "[%n-%t]\t[%T]\t%C"
+static std::string ADDITIONAL_FORMAT = "[%n-%t]\t[%T]\t%C";
 
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 

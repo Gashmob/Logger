@@ -103,10 +103,10 @@ void Logger::init(LoggerOption verboseP, const std::vector <LoggerType> &showTyp
         bool dirCreated = false;
 
         if (!file.is_open()) {
-            if (mkdir(LOG_PATH, S_IRWXU) == 0)
+            if (mkdir(LOG_PATH.c_str(), S_IRWXU) == 0)
                 dirCreated = true;
 
-            std::string fileName = (LOG_PATH "/" PROJECT_NAME "_log_") + getDate() + ".log";
+            std::string fileName = (LOG_PATH + "/" + PROJECT_NAME + "_log_") + getDate() + ".log";
             file.open(fileName, std::ios::out);
         }
 
