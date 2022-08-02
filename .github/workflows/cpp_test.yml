@@ -26,22 +26,21 @@ jobs:
           make
           ./logger_test
 
-  test-windows:
-    runs-on: windows-latest
-    defaults:
-      run:
-        working-directory: C++
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout
-        uses: actions/checkout@v3
+  # test-windows:
+  #   runs-on: windows-latest
+  #   defaults:
+  #     run:
+  #       working-directory: C++
+  #   steps:
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      - name: Run test
-        run: |
-          cmake -G "Unix Makefiles" .
-          make
-          echo "run tests :"
-          .\logger_test.exe
+  #     - name: Run test
+  #       run: |
+  #         cmake -G "Unix Makefiles" .
+  #         make
+  #         .\logger_test.exe
 
   test-macos:
     runs-on: macos-latest
