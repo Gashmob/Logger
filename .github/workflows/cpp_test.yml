@@ -39,7 +39,7 @@ jobs:
       - name: Run test
         run: |
           cmake .
-          dir
+          msbuild
 
   test-macos:
     runs-on: macos-latest
