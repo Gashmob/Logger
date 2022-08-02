@@ -40,7 +40,7 @@ jobs:
         run: |
           cmake -G "Unix Makefiles" .
           make
-          dir
+          .\logger_test.exe
 
   test-macos:
     runs-on: macos-latest
