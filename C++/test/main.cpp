@@ -31,7 +31,6 @@ int main() {
         cout << toPrint << flush;
 
         redirectOutput();
-        cout << "usefully, but dunno why. If removed there is a SIGSEGV" << endl;
 
         if (test.before) {
             test.before();
@@ -76,8 +75,8 @@ int main() {
 
 void redirectOutput() {
     original_out = cout.rdbuf();
-    stringstream ss;
-    cout.rdbuf(ss.rdbuf());
+    auto *ss = new stringstream();
+    cout.rdbuf(ss->rdbuf());
 }
 
 void restoreOutput() {
