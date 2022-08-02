@@ -103,7 +103,11 @@ void Logger::init(LoggerOption verboseP, const std::vector <LoggerType> &showTyp
         bool dirCreated = false;
 
         if (!file.is_open()) {
+#ifdef _WIN32
+            if (mkdir(LOG_PATH.c_str()) == 0)
+#else
             if (mkdir(LOG_PATH.c_str(), S_IRWXU) == 0)
+#endif
                 dirCreated = true;
 
             std::string fileName = (LOG_PATH + "/" + PROJECT_NAME + "_log_") + getDate() + ".log";
