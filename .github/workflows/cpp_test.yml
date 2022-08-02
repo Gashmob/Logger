@@ -39,8 +39,7 @@ jobs:
       - name: Run test
         run: |
           cmake .
-          make
-          .\logger_test.exe
+          dir
 
   test-macos:
     runs-on: macos-latest
