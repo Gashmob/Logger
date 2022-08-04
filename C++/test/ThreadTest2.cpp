@@ -124,14 +124,8 @@ Test ThreadTest2 = {
             }
 
             // Les 3ème et 4ème lignes du fichier sont bien formées.
-            // [2-12:12:16:1116084-INFO]	[operator()]	test
-            // [3-12:12:16:1326229-DEBUG]	[operator()]	test
             std::regex regex1("(.*)-INFO\\]\t\\[operator\\(\\)\\]\ttest");
             std::regex regex2("(.*)-DEBUG\\]\t\\[operator\\(\\)\\]\ttest");
-            bool a1 = std::regex_match(line3, regex1);
-            bool a2 = std::regex_match(line4, regex1);
-            bool b1 = std::regex_match(line3, regex2);
-            bool b2 = std::regex_match(line4, regex2);
             if (!std::regex_match(line3, regex1) && !std::regex_match(line4, regex1)) {
                 return false;
             }
