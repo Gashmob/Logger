@@ -160,5 +160,5 @@ Test ThreadTest2 = {
         .name = "ThreadTest2",
         .before = nothing,
         .run = runThreadTest2,
-        .after = nothing,
+        .after = clearDir,
 };
