@@ -3,7 +3,7 @@ name: C++ test
 on:
   push:
     paths:
-      - "C*/**"
+      - "C\\+\\+/**"
       - ".github/workflows/cpp_test.yml"
   pull_request:
     branches:
