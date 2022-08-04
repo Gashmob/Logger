@@ -251,27 +251,27 @@ void logger_init(LoggerOption verboseP, const LoggerType showTypesP[5]) {
             errno = -1;
             file = fopen(fileName, "w");
             if (errno != -1) {
-                ERROR_LOG(CONSOLE_ONLY, "Error log file open : %d\n", errno);
+                ERROR_LOG(CONSOLE_ONLY, "Error log file open : %d", errno);
                 exit(EXIT_FAILURE);
             }
             fileOpen = true;
         }
 
         if (pthread_mutex_init(&mutex, NULL) != 0) {
-            ERROR_LOG(CONSOLE_ONLY, "Error mutex : %d\n", errno);
+            ERROR_LOG(CONSOLE_ONLY, "Error mutex : %d", errno);
         }
 
-        INFO_LOG(FILE_ONLY, "Log start\n");
+        INFO_LOG(FILE_ONLY, "Log start");
         isInitialized = true;
         if (dirCreated)
-            WARNING_LOG(FILE_AND_CONSOLE, "Log directory created\n");
+            WARNING_LOG(FILE_AND_CONSOLE, "Log directory created");
     } else
-        WARNING_LOG(FILE_AND_CONSOLE, "Log already init\n");
+        WARNING_LOG(FILE_AND_CONSOLE, "Log already init");
 }
 
 void logger_exit() {
     if (isInitialized) {
-        INFO_LOG(FILE_ONLY, "End log\n");
+        INFO_LOG(FILE_ONLY, "End log");
         isInitialized = false;
         if (fileOpen) {
             fclose(file);
@@ -281,7 +281,7 @@ void logger_exit() {
 
         pthread_mutex_destroy(&mutex);
     } else
-        ERROR_LOG(CONSOLE_ONLY, "Please init before exit\n");
+        ERROR_LOG(CONSOLE_ONLY, "Please init before exit");
 }
 
 void logger_addOutputStream(FILE *stream) {
@@ -439,7 +439,7 @@ void writeToFile(char *message) {
         fwrite(message, sizeof(char), strlen(message), file);
         fflush(file);
     } else if (!isInitialized)
-        ERROR_LOG(CONSOLE_ONLY, "Please init logger\n");
+        ERROR_LOG(CONSOLE_ONLY, "Please init logger");
 }
 
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
