@@ -12,6 +12,7 @@ Les tests sont les mêmes pour chaque version, ils sont effectués sur ubuntu, w
 [![Kotlin test](https://github.com/Gashmob/Logger/actions/workflows/kotlin_test.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/kotlin_test.yml)
 [![Python test](https://github.com/Gashmob/Logger/actions/workflows/python_test.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/python_test.yml)
 [![C++ test](https://github.com/Gashmob/Logger/actions/workflows/cpp_test.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/cpp_test.yml)
+[![C test](https://github.com/Gashmob/Logger/actions/workflows/c_test.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/c_test.yml)
 
 |          | Ubuntu           | Windows          | MacOS            |
 |:---------|:----------------:|:----------------:|:----------------:|
