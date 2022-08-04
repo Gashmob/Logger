@@ -24,8 +24,8 @@ Les tests sont les mêmes pour chaque version, ils sont effectués sur ubuntu, w
 
 **Notes :**
 
-- Le test Windows pour Kotlin ne fonctionne pas : `kotlinc` n'arrive pas à compiler les sources dans le script batch (si vous avez une idée de comment fixer ça, n'hésitez pas à proposer une pull request, ou répondre à l'issue [#2](https://github.com/Gashmob/Logger/issues/2))
-- Le test Windows pour C++ ne fonctionne pas : la compilation réussie mais l'exécutable renvoie directement le code 1 sans rien afficher ([#3](https://github.com/Gashmob/Logger/issues/3))
+- Le test Windows pour Kotlin ne fonctionne pas : `kotlinc` n'arrive pas à compiler les sources dans le script batch (si vous avez une idée de comment fixer ça, n'hésitez pas à proposer une pull request, ou répondre à l'issue [#2](https://github.com/Gashmob/Logger/issues/2)).
+- Le test Windows pour C++ ne fonctionne pas : la compilation réussie mais l'exécutable renvoie directement le code 1 sans rien afficher ([#3](https://github.com/Gashmob/Logger/issues/3)) (de même pour le C).
 
 ## Utilisation
 
