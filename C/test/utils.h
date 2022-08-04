@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdio.h>
 
 static int rmDir(char *path) {
     DIR *d = opendir(path);
