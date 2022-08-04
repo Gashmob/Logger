@@ -2,7 +2,6 @@
 #define LOGGER_UTILS_H
 
 #include <string.h>
-#include <malloc.h>
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
