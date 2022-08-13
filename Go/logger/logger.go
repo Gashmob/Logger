@@ -28,13 +28,13 @@ import (
  * The log directory's path
  * Change it with your path
  */
-const LogPath = "./logs"
+var LogPath = "./logs"
 
 /**
  * Project's name
  * Change it with your project's name
  */
-const ProjectName = "project"
+var ProjectName = "project"
 
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
@@ -58,17 +58,17 @@ const ProjectName = "project"
 /**
  * Format for console log
  */
-const ConsoleFormat = "[%T]\t%C"
+var ConsoleFormat = "[%T]\t%C"
 
 /**
  * Format for log file
  */
-const FileFormat = "[%n-%h-%t]\t[%T]\t%C"
+var FileFormat = "[%n-%h-%t]\t[%T]\t%C"
 
 /**
  * Format for additional output streams
  */
-const AdditionalFormat = "[%n-%t]\t[%T]\t%C"
+var AdditionalFormat = "[%n-%t]\t[%T]\t%C"
 
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
