@@ -13,6 +13,7 @@ Les tests sont les mêmes pour chaque version, ils sont effectués sur ubuntu, w
 [![Python test](https://github.com/Gashmob/Logger/actions/workflows/python_test.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/python_test.yml)
 [![C++ test](https://github.com/Gashmob/Logger/actions/workflows/cpp_test.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/cpp_test.yml)
 [![C test](https://github.com/Gashmob/Logger/actions/workflows/c_test.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/c_test.yml)
+[![Go test](https://github.com/Gashmob/Logger/actions/workflows/go_test.yml/badge.svg)](https://github.com/Gashmob/Logger/actions/workflows/go_test.yml)
 
 |          | Ubuntu           | Windows          | MacOS            |
 |:---------|:----------------:|:----------------:|:----------------:|
@@ -21,7 +22,7 @@ Les tests sont les mêmes pour chaque version, ils sont effectués sur ubuntu, w
 |**Python**|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |**C++**   |:heavy_check_mark:|:x:               |:heavy_check_mark:|
 |**C**     |:heavy_check_mark:|:x:               |:grey_question:   |
-|**Go**    |:grey_question:   |:grey_question:   |:grey_question:   |
+|**Go**    |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 
 **Notes :**
 
