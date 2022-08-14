@@ -37,7 +37,7 @@ jobs:
 
       - name: Run test
         run: |
-          go run main.go
+          go run BasicTest1.go main.go Test.go ThreadTest1.go ThreadTest2.go utils.go
 
   test-macos:
     runs-on: macos-latest
