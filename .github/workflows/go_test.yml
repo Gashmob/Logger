@@ -1,0 +1,56 @@
+name: Go test
+
+on:
+  push:
+    paths:
+      - "Go/**"
+      - ".github/workflows/go_test.yml"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  test-ubuntu:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Go
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run test
+        run: |
+          cd test
+          go run *.go
+
+  test-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: Go
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run test
+        run: |
+          cd test
+          go run *.go
+
+  test-macos:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: Go
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run test
+        run: |
+          cd test
+          go run *.go
