@@ -21,7 +21,7 @@ Les tests sont les mêmes pour chaque version, ils sont effectués sur ubuntu, w
 |**Kotlin**|:heavy_check_mark:|:x:               |:heavy_check_mark:|
 |**Python**|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 |**C++**   |:heavy_check_mark:|:x:               |:heavy_check_mark:|
-|**C**     |:heavy_check_mark:|:x:               |:grey_question:   |
+|**C**     |:heavy_check_mark:|:x:               |:x:               |
 |**Go**    |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
 
 **Notes :**

@@ -42,18 +42,18 @@ jobs:
   #         make
   #         .\logger_test.exe
 
-  test-macos:
-    runs-on: macos-latest
-    defaults:
-      run:
-        working-directory: C
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout
-        uses: actions/checkout@v3
+  # test-macos:
+  #   runs-on: macos-latest
+  #   defaults:
+  #     run:
+  #       working-directory: C
+  #   steps:
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      - name: Run test
-        run: |
-          cmake .
-          make
-          ./logger_test
+  #     - name: Run test
+  #       run: |
+  #         cmake .
+  #         make
+  #         ./logger_test
