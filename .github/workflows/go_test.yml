@@ -29,7 +29,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        working-directory: Go
+        working-directory: Go/test
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
@@ -37,7 +37,6 @@ jobs:
 
       - name: Run test
         run: |
-          cd test
           go run *.go
 
   test-macos:
