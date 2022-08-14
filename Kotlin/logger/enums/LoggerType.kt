@@ -12,5 +12,5 @@ enum class LoggerType(private val value: String, val color: LoggerColor) {
     WARNING("WARNING", YELLOW),
     DEBUG("DEBUG", PURPLE);
 
-    override fun toString() = value.toUpperCase()
+    override fun toString() = value.uppercase()
 }

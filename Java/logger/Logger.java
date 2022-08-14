@@ -31,12 +31,12 @@ public abstract class Logger {
      * The log directory's path
      * Change it with your path
      */
-    private final static String logPath = "./logs";
+    public static String logPath = "./logs";
     /**
      * Project's name
      * Change it with your project's name
      */
-    private final static String projectName = "project";
+    public static String projectName = "project";
 
     // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
@@ -60,18 +60,22 @@ public abstract class Logger {
     /**
      * Format for console log
      */
-    private final static String console_format = "[%T]\t%C";
+    public static String console_format = "[%T]\t%C";
     /**
      * Format for log file
      */
-    private final static String file_format = "[%n-%h-%t]\t[%T]\t%C";
+    public static String file_format = "[%n-%h-%t]\t[%T]\t%C";
     /**
      * Format for additional output streams
      */
-    private final static String additional_format = "[%n-%t]\t[%T]\t%C";
+    public static String additional_format = "[%n-%t]\t[%T]\t%C";
 
     // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
+    /**
+     * If the logger is initialized
+     */
+    private static boolean isInitialized = false;
     /**
      * The writer for the file
      */
@@ -114,35 +118,37 @@ public abstract class Logger {
      * @param showTypes LoggerType
      */
     public static void init(LoggerOption verbose, LoggerType[] showTypes) {
-        if (printWriter == null) {
+        if (!isInitialized) {
             Logger.verbose = verbose;
             Logger.showTypes = new ArrayList<>(Arrays.asList(showTypes));
             additionalStreams = new ArrayList<>();
 
-            boolean ok;
+            boolean ok = true;
             boolean dirCreated = false;
-            BufferedWriter bufferedWriter = null;
 
-            try {
-                dirCreated = new File(logPath).mkdir();
-                FileWriter fileWriter = new FileWriter(logPath + "/" + projectName + "_log_" + getDate() + ".log");
-                bufferedWriter = new BufferedWriter(fileWriter);
-                ok = true;
-            } catch (IOException e) {
-                error(e, CONSOLE_ONLY);
-                ok = false;
+            if (verbose != CONSOLE_ONLY) {
+                BufferedWriter bufferedWriter;
+
+                try {
+                    dirCreated = new File(logPath).mkdir();
+                    FileWriter fileWriter = new FileWriter(logPath + "/" + projectName + "_log_" + getDate() + ".log");
+                    bufferedWriter = new BufferedWriter(fileWriter);
+                    printWriter = new PrintWriter(bufferedWriter);
+                } catch (IOException e) {
+                    error(e, CONSOLE_ONLY);
+                    ok = false;
+                }
             }
 
             if (ok) {
-                printWriter = new PrintWriter(bufferedWriter);
-
+                isInitialized = true;
                 info("Log start", FILE_ONLY);
 
                 if (dirCreated) {
                     warning("Log directory created");
                 }
             } else {
-                error("Log error");
+                error("Log error", CONSOLE_ONLY);
             }
         } else {
             warning("Log already init");
@@ -254,19 +260,45 @@ public abstract class Logger {
 
                 LocalDateTime now = LocalDateTime.now();
                 switch (c) {
-                    case 'Y' -> res.append(now.getYear());
-                    case 'M' -> res.append(String.format("%02d", now.getMonthValue()));
-                    case 'D' -> res.append(String.format("%02d", now.getDayOfMonth()));
-                    case 'H' -> res.append(String.format("%02d", now.getHour()));
-                    case 'm' -> res.append(String.format("%02d", now.getMinute()));
-                    case 'S' -> res.append(String.format("%02d", now.getSecond()));
-                    case 'N' -> res.append(String.format("%03d", now.getNano() / 1000));
-                    case 'd' -> res.append(getDate());
-                    case 'h' -> res.append(getHour());
-                    case 'T' -> res.append(trace);
-                    case 'C' -> res.append(message);
-                    case 'n' -> res.append(nbLog);
-                    case 't' -> res.append(logType);
+                    case 'Y':
+                        res.append(now.getYear());
+                        break;
+                    case 'M':
+                        res.append(String.format("%02d", now.getMonthValue()));
+                        break;
+                    case 'D':
+                        res.append(String.format("%02d", now.getDayOfMonth()));
+                        break;
+                    case 'H':
+                        res.append(String.format("%02d", now.getHour()));
+                        break;
+                    case 'm':
+                        res.append(String.format("%02d", now.getMinute()));
+                        break;
+                    case 'S':
+                        res.append(String.format("%02d", now.getSecond()));
+                        break;
+                    case 'N':
+                        res.append(String.format("%03d", now.getNano() / 1000));
+                        break;
+                    case 'd':
+                        res.append(getDate());
+                        break;
+                    case 'h':
+                        res.append(getHour());
+                        break;
+                    case 'T':
+                        res.append(trace);
+                        break;
+                    case 'C':
+                        res.append(message);
+                        break;
+                    case 'n':
+                        res.append(nbLog);
+                        break;
+                    case 't':
+                        res.append(logType);
+                        break;
                 }
             } else {
                 res.append(c);
@@ -334,7 +366,7 @@ public abstract class Logger {
         if (printWriter != null) {
             printWriter.println(message);
             printWriter.flush();
-        } else {
+        } else if (!isInitialized) {
             error("Please init Logger", CONSOLE_ONLY);
         }
     }
@@ -379,10 +411,14 @@ public abstract class Logger {
      * Quit the log and close the writer
      */
     public static void exit() {
-        if (printWriter != null) {
+        if (isInitialized) {
             info("End log", FILE_ONLY);
-            printWriter.close();
-            printWriter = null;
+            isInitialized = false;
+
+            if (printWriter != null) {
+                printWriter.close();
+                printWriter = null;
+            }
         } else {
             error("Please init before exit", CONSOLE_ONLY);
         }

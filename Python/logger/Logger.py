@@ -92,6 +92,8 @@ class LoggerType(Enum):
 class Logger:
     """The class used for logs"""
 
+    __isInitialized = False
+    """If The logger is initialized"""
     __file = None
     """The file where we write logs"""
     __additionalStreams = []
@@ -107,19 +109,22 @@ class Logger:
     def init(cls, verbose=LoggerOption.FILE_AND_CONSOLE, showTrace=True,
              showTypes=(LoggerType.INFO, LoggerType.SUCCESS, LoggerType.ERROR, LoggerType.WARNING, LoggerType.DEBUG)):
         """Initialisation"""
-        if cls.__file is None:
+        if not cls.__isInitialized:
             cls.__verbose = verbose
             cls.__showTrace = showTrace
             cls.__showTypes = showTypes
 
             dir_created = False
 
-            if not os.path.exists(logPath):
-                os.mkdir(logPath)
-                dir_created = True
+            if verbose != LoggerOption.CONSOLE_ONLY:
+                if not os.path.exists(logPath):
+                    os.mkdir(logPath)
+                    dir_created = True
 
-            cls.__file = open(logPath + "/" + projectName + "_log_" + cls.__getDate() + ".log", "w")
+                cls.__file = open(logPath + "/" + projectName + "_log_" + cls.__getDate() + ".log", "w")
+
             cls.info("Log start", LoggerOption.FILE_ONLY)
+            cls.__isInitialized = True
 
             if dir_created:
                 cls.warning("Log directory created")
@@ -129,10 +134,13 @@ class Logger:
     @classmethod
     def exit(cls):
         """Quit the log and close the file"""
-        if cls.__file is not None:
+        if cls.__isInitialized:
             cls.info("End log", LoggerOption.FILE_ONLY)
-            cls.__file.close()
-            cls.__file = None
+            cls.__isInitialized = False
+
+            if cls.__file is not None:
+                cls.__file.close()
+                cls.__file = None
         else:
             cls.error("Please init before exit", LoggerOption.CONSOLE_ONLY)
 
@@ -271,7 +279,7 @@ class Logger:
         if cls.__file is not None:
             cls.__file.write(message)
             cls.__file.flush()
-        else:
+        elif not cls.__isInitialized:
             cls.error("Please init logger", LoggerOption.CONSOLE_ONLY)
 
     @classmethod

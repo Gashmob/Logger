@@ -1,5 +1,7 @@
 #include "Logger.hpp"
 
+bool Logger::isInitialized = false;
+
 std::ofstream Logger::file("");
 
 std::vector<std::ostream *> Logger::additionalStreams = std::vector<std::ostream *>();
@@ -10,7 +12,7 @@ pthread_mutex_t Logger::mutex;
 
 LoggerOption Logger::verbose = FILE_AND_CONSOLE;
 
-std::vector<LoggerType> Logger::showTypes = {INFO, SUCCESS, ERROR, WARNING, DEBUG};
+std::vector <LoggerType> Logger::showTypes = {INFO, SUCCESS, ERROR, WARNING, DEBUG};
 
 
 std::string Logger::getColor(LoggerColor color) {
@@ -93,18 +95,24 @@ std::string Logger::getTypeName(LoggerType type) {
     }
 }
 
-void Logger::init(LoggerOption verboseP, const std::vector<LoggerType> &showTypesP) {
-    if (!file.is_open()) {
+void Logger::init(LoggerOption verboseP, const std::vector <LoggerType> &showTypesP) {
+    if (!isInitialized) {
         verbose = verboseP;
         showTypes = showTypesP;
 
         bool dirCreated = false;
 
-        if (mkdir(LOG_PATH, S_IRWXU) == 0)
-            dirCreated = true;
+        if (!file.is_open()) {
+#ifdef _WIN32
+            if (mkdir(LOG_PATH.c_str()) == 0)
+#else
+            if (mkdir(LOG_PATH.c_str(), S_IRWXU) == 0)
+#endif
+                dirCreated = true;
 
-        std::string fileName = (LOG_PATH "/" PROJECT_NAME "_log_") + getDate() + ".log";
-        file.open(fileName, std::ios::out);
+            std::string fileName = (LOG_PATH + "/" + PROJECT_NAME + "_log_") + getDate() + ".log";
+            file.open(fileName, std::ios::out);
+        }
 
         nbLog = 0;
 
@@ -112,6 +120,7 @@ void Logger::init(LoggerOption verboseP, const std::vector<LoggerType> &showType
             ERROR_LOG(CONSOLE_ONLY, "Error mutex : %d\n", errno);
 
         INFO_LOG(FILE_ONLY, "Log start\n");
+        isInitialized = true;
         if (dirCreated)
             WARNING_LOG(FILE_AND_CONSOLE, "Log directory created\n");
     } else
@@ -119,9 +128,12 @@ void Logger::init(LoggerOption verboseP, const std::vector<LoggerType> &showType
 }
 
 void Logger::exit() {
-    if (file.is_open()) {
+    if (isInitialized) {
         INFO_LOG(FILE_ONLY, "End log\n");
-        file.close();
+        isInitialized = false;
+
+        if (file.is_open())
+            file.close();
 
         pthread_mutex_destroy(&mutex);
     } else
@@ -232,7 +244,7 @@ void Logger::writeToFile(const std::string &message) {
     if (file.is_open()) {
         file << message;
         file.flush();
-    } else
+    } else if (!isInitialized)
         ERROR_LOG(CONSOLE_ONLY, "Please init logger\n");
 }
 

@@ -34,12 +34,12 @@
  * The log directory's path
  * Change it with your path
  */
-#define LOG_PATH "./logs"
+static std::string LOG_PATH = "./logs";
 /**
  * Project's name
  * Change it with your project's name
  */
-#define PROJECT_NAME "project"
+static std::string PROJECT_NAME = "project";
 
 /*
  * Different rules for the formats :
@@ -61,17 +61,17 @@
 /**
  * Format for console log
  */
-#define CONSOLE_FORMAT "[%T]\t%C"
+static std::string CONSOLE_FORMAT = "[%T]\t%C";
 
 /**
  * Format for log file
  */
-#define FILE_FORMAT "[%n-%h-%t]\t[%T]\t%C"
+static std::string FILE_FORMAT = "[%n-%h-%t]\t[%T]\t%C";
 
 /**
  * Format for additional output stream
  */
-#define ADDITIONAL_FORMAT "[%n-%t]\t[%T]\t%C"
+static std::string ADDITIONAL_FORMAT = "[%n-%t]\t[%T]\t%C";
 
 // _.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-._.-.
 
@@ -151,7 +151,7 @@ public:
      * Initialisation
      */
     static void init(LoggerOption verboseP = FILE_AND_CONSOLE,
-                     const std::vector<LoggerType> &showTypesP = {INFO, SUCCESS, ERROR, WARNING, DEBUG});
+                     const std::vector <LoggerType> &showTypesP = {INFO, SUCCESS, ERROR, WARNING, DEBUG});
 
     /**
      * Quit the log and close the writer
@@ -284,6 +284,10 @@ private:
 
 private:
     /**
+     * If the logger is initialized
+     */
+    static bool isInitialized;
+    /**
      * The log file
      */
     static std::ofstream file;
@@ -306,7 +310,7 @@ private:
     /**
      * The types of logs that be shown
      */
-    static std::vector<LoggerType> showTypes;
+    static std::vector <LoggerType> showTypes;
 
 private: // Disallow to instance this class
     Logger() = default;

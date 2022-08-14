@@ -1,0 +1,63 @@
+name: Kotlin test
+
+on:
+  push:
+    paths:
+      - "Kotlin/**"
+      - ".github/workflows/kotlin_test.yml"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  test-ubuntu:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Kotlin
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Kotlin
+        uses: fwilhe2/setup-kotlin@main
+
+      - name: Run test
+        run: |
+          kotlinc -cp Logger_Kotlin.jar ./test/*.kt -include-runtime
+          kotlin -cp ./Logger_Kotlin.jar:. MainKt
+
+  # test-windows:
+  #   runs-on: windows-latest
+  #   defaults:
+  #     run:
+  #       working-directory: Kotlin
+  #   steps:
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+
+  #     - name: Setup Kotlin
+  #       uses: fwilhe2/setup-kotlin@main
+
+  #     - name: Run test
+  #       run: run.bat
+
+  test-macos:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: Kotlin
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Kotlin
+        uses: fwilhe2/setup-kotlin@main
+
+      - name: Run test
+        run: |
+          kotlinc -cp Logger_Kotlin.jar ./test/*.kt -include-runtime
+          kotlin -cp ./Logger_Kotlin.jar:. MainKt

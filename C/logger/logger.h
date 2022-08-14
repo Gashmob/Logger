@@ -35,12 +35,12 @@
  * The log directory's path
  * Change it with your path
  */
-#define LOG_PATH "./logs"
+static char* LOG_PATH = "./logs";
 /**
  * Project's name
  * Change it with your project's name
  */
-#define PROJECT_NAME "project"
+static char* PROJECT_NAME = "project";
 /**
  * Max size of a log message
  */
@@ -70,17 +70,17 @@
 /**
  * Format for console log
  */
-#define CONSOLE_FORMAT "[%T]\t%C"
+static char* CONSOLE_FORMAT = "[%T]\t%C\n";
 
 /**
  * Format for log file
  */
-#define FILE_FORMAT "[%n-%h-%t]\t[%T]\t%C"
+static char* FILE_FORMAT = "[%n-%h-%t]\t[%T]\t%C\n";
 
 /**
  * Format for additional output stream
  */
-#define ADDITIONAL_FORMAT "[%n-%t]\t[%T]\t%C"
+static char* ADDITIONAL_FORMAT = "[%n-%t]\t[%T]\t%C\n";
 
 /**
  * Log types
